@@ -1,0 +1,16 @@
+{
+  "python.languageServer": "Pylance",
+
+  "editor.formatOnSave": true,
+  "python.formatting.provider": "none",
+  "autoDocstring.docstringFormat": "numpy",
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true
+}

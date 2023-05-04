@@ -17,7 +17,7 @@ class State:
         self.isEnd = False
         self.determine = DETERMINISTIC
 
-    # As a grid game, it needs a State to justify each state(position) of our agent, 
+    # As a grid game, it needs a State to justify each state(position) of our agent,
     # giving reward according to its state
     def giveReward(self):
         if self.state == WIN_STATE:
@@ -30,7 +30,7 @@ class State:
     def isEndFunc(self):
         if (self.state == WIN_STATE) or (self.state == LOSE_STATE):
             self.isEnd = True
-            
+
     # When our agent takes an action, the State should have a function to accept an
     # action and return a legal position of next state.
 
@@ -53,8 +53,8 @@ class State:
             else:
                 nxtState = (self.state[0], self.state[1] + 1)
             # if next state legal
-            if (nxtState[0] >= 0) and (nxtState[0] <= (BOARD_ROWS -1)):
-                if (nxtState[1] >= 0) and (nxtState[1] <= (BOARD_COLS -1)):
+            if (nxtState[0] >= 0) and (nxtState[0] <= (BOARD_ROWS - 1)):
+                if (nxtState[1] >= 0) and (nxtState[1] <= (BOARD_COLS - 1)):
                     if nxtState != (1, 1):
                         return nxtState
             return self.state
@@ -62,24 +62,24 @@ class State:
     def showBoard(self):
         self.board[self.state] = 1
         for i in range(0, BOARD_ROWS):
-            print('-----------------')
-            out = '| '
+            print("-----------------")
+            out = "| "
             for j in range(0, BOARD_COLS):
                 if self.board[i, j] == 1:
-                    token = '*'
+                    token = "*"
                 if self.board[i, j] == -1:
-                    token = 'z'
+                    token = "z"
                 if self.board[i, j] == 0:
-                    token = '0'
-                out += token + ' | '
+                    token = "0"
+                out += token + " | "
             print(out)
-        print('-----------------')
+        print("-----------------")
 
 
 # Agent of player
 
-class Agent:
 
+class Agent:
     def __init__(self):
         self.states = []
         self.actions = ["up", "down", "left", "right"]
@@ -129,7 +129,9 @@ class Agent:
                 self.state_values[self.State.state] = reward  # this is optional
                 print("Game End Reward", reward)
                 for s in reversed(self.states):
-                    reward = self.state_values[s] + self.lr * (reward - self.state_values[s])
+                    reward = self.state_values[s] + self.lr * (
+                        reward - self.state_values[s]
+                    )
                     self.state_values[s] = round(reward, 3)
                 self.reset()
                 i += 1
@@ -147,12 +149,12 @@ class Agent:
 
     def showValues(self):
         for i in range(0, BOARD_ROWS):
-            print('----------------------------------')
-            out = '| '
+            print("----------------------------------")
+            out = "| "
             for j in range(0, BOARD_COLS):
-                out += str(self.state_values[(i, j)]).ljust(6) + ' | '
+                out += str(self.state_values[(i, j)]).ljust(6) + " | "
             print(out)
-        print('----------------------------------')
+        print("----------------------------------")
 
 
 if __name__ == "__main__":
