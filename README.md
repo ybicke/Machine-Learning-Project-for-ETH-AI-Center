@@ -23,6 +23,12 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. It's recommended to set up the extensions in your IDE equivalent to those listed above in the VSCode setup section for a more convenient development.
 
+## Managing dependencies
+
+- To add a package to dependencies, use `poetry add <package>`
+- To add a package development dependencies (not necessary for running the code), use `poetry add -D <package>`
+- To remove a package from the dependencies, use `poetry remove <package>`
+
 ## Running the code
 
 You can run scripts specified in `pyproject.toml` with `poetry run <script name>`. For example, to run the `gridworld` script, run `poetry run gridworld`.
