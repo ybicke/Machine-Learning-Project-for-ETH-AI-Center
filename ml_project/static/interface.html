@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Give your preference</title>
+
+  <!-- Roboto font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./interface.css">
+  <script src="./interface.js" type="module"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div id="left-option" class="option">
+      <video src="videos/{{ left_video }}" alt="Left option" width="500" controls autoplay muted></video>
+      <button>⬅️ Left is better</button>
+    </div>
+
+    <div class="middle">
+      <button id="restart-button">🔃 Restart</button>
+      <p id="status-text"></p>
+      <button id="equal-button">🤷‍♂️ Equally good</button>
+    </div>
+
+    <div id="right-option" class="option">
+      <video src="videos/{{ right_video }}" alt="Left option" width="500" controls autoplay muted></video>
+      <button>Right is better ➡️</button>
+    </div>
+  </div>
+
+  <button id="skip-button">Skip ⏭️</button>
+</body>
+
+</html>

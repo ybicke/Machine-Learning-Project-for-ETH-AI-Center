@@ -32,3 +32,11 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 ## Running the code
 
 You can run scripts specified in `pyproject.toml` with `poetry run <script name>`. For example, to run the `gridworld` script, run `poetry run gridworld`.
+
+To launch the web interface, run:
+
+```bash
+poetry run flask --app ml_project/web_interface run
+```
+
+(might also need to run `poetry install` to update the dependencies)
