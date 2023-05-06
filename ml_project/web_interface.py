@@ -11,9 +11,7 @@ from uuid import uuid4
 from flask import Flask, abort, render_template, request, session
 
 # pylint: disable=fixme
-# TODO: Show error on interface if no videos are found,
-# test if reading after append works as expected
-# clean up `get_next_videos` function
+# TODO: move videos closer together
 
 current_path = Path(__file__).parent.resolve()
 static_path = path.join(current_path, "static")
@@ -31,6 +29,7 @@ if not path.exists(preferences_path):
 # Helper functions
 
 
+# pylint: disable=too-many-branches
 def get_next_videos(preferences_file: TextIOWrapper):
     """Find the next videos to be compared by the user."""
     videos = [path.basename(video) for video in glob(f"{videos_path}/*.mp4")]
@@ -39,43 +38,43 @@ def get_next_videos(preferences_file: TextIOWrapper):
         return {}
 
     videos_set = set(videos)
-    # preferences = set(
-    #     (line[1], line[2])
-    #     for line in (line_string.split(";") for line_string in preferences_file)
-    #     if line[0] == session["userId"]
-    # )
-    preferences = [line.split(";") for line in preferences_file]
+    user_id = session["userId"]
+
+    # Skip header row
+    next(preferences_file)
+
+    # Filter preferences (e.g., videos that don't exist anymore,
+    # so we can use the length of list to see if all videos were compared to this one)
+    preferences = [
+        preference
+        for preference in (line.split(";") for line in preferences_file)
+        if preference[0] == user_id
+        and preference[1] in videos_set
+        or preference[2] in videos_set
+        or preference[0] != preference[1]
+    ]
 
     preference_pairs = {}
 
-    # Initialize dictionary with empty sets
-    # video_pairs = {preference[1]: set() for preference in preferences}
-    # video_pairs = {
-    #     **video_pairs,
-    #     **{preference[2]: set() for preference in preferences},
-    # }
-
-    # Add already rated videos to the dictionary
+    # Add already rated videos to a dictionary of sets for quick lookups
     for preference in preferences:
-        if preference[1] not in videos_set or preference[2] not in videos_set:
-            continue
-
-        # Sort key and value, so that each pair is only in the dict once
-        keys = (
-            [preference[1], preference[2]]
-            if preference[1] < preference[2]
-            else [preference[2], preference[1]]
-        )
-
-        if keys[0] in preference_pairs:
-            preference_pairs[keys[0]].add(keys[1])
+        if preference[1] not in preference_pairs:
+            preference_pairs[preference[1]] = {preference[2]}
         else:
-            preference_pairs[keys[0]] = set(keys[1])
+            preference_pairs[preference[1]].add(preference[2])
 
+        if preference[2] not in preference_pairs:
+            preference_pairs[preference[2]] = {preference[1]}
+        else:
+            preference_pairs[preference[2]].add(preference[1])
+
+    # Find next random video pair (exclusing the already rated ones)
     next_left_video = None
     next_right_video = None
 
     is_new_pair_found = False
+
+    original_video_count = len(videos)
 
     while not is_new_pair_found:
         video_count = len(videos)
@@ -87,33 +86,29 @@ def get_next_videos(preferences_file: TextIOWrapper):
         next_left_video = videos[video_indices[0]]
         next_right_video = videos[video_indices[1]]
 
-        # Need to sort the key and value again to access the dictionary entry
-        sorted_next_videos = (
-            [videos[video_indices[0]], videos[video_indices[1]]]
-            if video_indices[0] < video_indices[1]
-            else [videos[video_indices[1]], videos[video_indices[0]]]
-        )
-
-        # if (next_left_video, next_right_video) not in preferences and (
-        #     next_right_video,
-        #     next_left_video,
-        # ) not in preferences:
-        #     is_new_pair_found = True
-        # elif video_pairs:
-        #     pass
-
         if (
-            sorted_next_videos[0] not in preference_pairs
-            or preference_pairs[sorted_next_videos[0]] != sorted_next_videos[1]
+            next_left_video not in preference_pairs
+            or next_right_video not in preference_pairs[next_left_video]
         ):
             is_new_pair_found = True
-        elif len(preference_pairs[sorted_next_videos[0]]) == len(videos):
-            videos.remove(sorted_next_videos[0])
+        else:
+            # If all videos were compared to this one,
+            # remove it from the video list (so that we don't consider them again)
+            if len(preference_pairs[next_left_video]) == original_video_count - 1:
+                videos.remove(next_left_video)
+
+            if len(preference_pairs[next_right_video]) == original_video_count - 1:
+                videos.remove(next_right_video)
 
     if next_left_video is None or next_right_video is None:
         return {}
 
-    return {"nextLeftVideo": next_left_video, "nextRightVideo": next_right_video}
+    return {
+        "nextLeftVideo": next_left_video,
+        "nextRightVideo": next_right_video,
+        "ratedPairCount": len(preferences),
+        "totalPairCount": int((original_video_count * (original_video_count - 1)) / 2),
+    }
 
 
 # Flask webapp
@@ -123,7 +118,7 @@ app.secret_key = "MhTOR2a87AKIaMqK0ih0nlG1morh1sZg"
 
 
 def use_session(route: Callable[[], Any]):
-    """Decorate a Flask route to make sure the request has a valid session."""
+    """Decorate a Flask route to make sure the session has a valid user ID."""
 
     @wraps(route)
     def decorated_route(*args, **kwargs):
@@ -146,10 +141,15 @@ def home():
     next_videos = {}
 
     with open(preferences_path, "r", encoding="utf-8") as preferences_file:
-        # Skip header row
-        next(preferences_file)
-
         next_videos = get_next_videos(preferences_file)
+
+    user_id = session["userId"]
+    error = (
+        f'No video was found in "{videos_path}"'
+        f'" that was not yet rated by user "{user_id}".'
+        if "nextLeftVideo" not in next_videos or "nextRightVideo" not in next_videos
+        else ""
+    )
 
     return render_template(
         "interface.html",
@@ -159,6 +159,9 @@ def home():
         right_video=next_videos["nextRightVideo"]
         if "nextRightVideo" in next_videos
         else "",
+        rated_pair_count=next_videos["ratedPairCount"],
+        total_pair_count=next_videos["totalPairCount"],
+        error=error,
     )
 
 
@@ -186,6 +189,7 @@ def register_preference():
                 f"{session['userId']};{left_video};{right_video};{preference}\n"
             )
 
+        preferences_file.seek(0)
         next_videos = get_next_videos(preferences_file)
 
     return next_videos

@@ -61,6 +61,11 @@ video {
   width: 15rem;
 }
 
+#progress {
+  margin-bottom: 5rem;
+  font-size: 1.3rem;
+}
+
 #status-text {
   color: rgb(232, 128, 2);
 }

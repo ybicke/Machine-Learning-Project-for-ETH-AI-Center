@@ -2,6 +2,9 @@
 const leftVideo = document.querySelector("#left-option > video");
 const rightVideo = document.querySelector("#right-option > video");
 
+const totalPairCountText = document.getElementById("total-pair-count");
+const ratedPairCountText = document.getElementById("rated-pair-count");
+
 const statusText = document.getElementById("status-text");
 
 // Restart both the left and the right videos
@@ -57,6 +60,11 @@ async function registerPreference(preference) {
 
   leftVideo.src = `videos/${response.nextLeftVideo}`;
   rightVideo.src = `videos/${response.nextRightVideo}`;
+
+  totalPairCountText.innerText =
+    typeof response.totalPairCount === "number" ? response.totalPairCount : "?";
+  ratedPairCountText.innerText =
+    typeof response.ratedPairCount === "number" ? response.ratedPairCount : "?";
 }
 
 // Add the click listeners to the corresponding buttons
