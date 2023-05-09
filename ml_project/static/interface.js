@@ -48,23 +48,22 @@ async function registerPreference(preference) {
     return;
   }
 
-  if (!response.nextLeftVideo || !response.nextRightVideo) {
-    statusText.innerText =
-      "No more samples to rate. Thank you for providing your preferences!";
-
-    leftVideo.src = "";
-    rightVideo.src = "";
-
-    return;
+  if (typeof response.ratedPairCount === "number") {
+    ratedPairCountText.innerText = response.ratedPairCount;
   }
 
-  leftVideo.src = `videos/${response.nextLeftVideo}`;
-  rightVideo.src = `videos/${response.nextRightVideo}`;
+  if (typeof response.totalPairCount === "number") {
+    totalPairCountText.innerText = response.totalPairCount;
+  }
 
-  totalPairCountText.innerText =
-    typeof response.totalPairCount === "number" ? response.totalPairCount : "?";
-  ratedPairCountText.innerText =
-    typeof response.ratedPairCount === "number" ? response.ratedPairCount : "?";
+  leftVideo.src = response.nextLeftVideo
+    ? `videos/${response.nextLeftVideo}`
+    : "";
+  rightVideo.src = response.nextRightVideo
+    ? `videos/${response.nextRightVideo}`
+    : "";
+
+  statusText.innerHTML = response.status;
 }
 
 // Add the click listeners to the corresponding buttons
