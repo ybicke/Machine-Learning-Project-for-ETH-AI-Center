@@ -182,7 +182,7 @@ def home():
         right_video=next_videos["nextRightVideo"],
         rated_pair_count=next_videos["ratedPairCount"],
         total_pair_count=next_videos["totalPairCount"],
-        error=next_videos["status"],
+        status=next_videos["status"],
     )
 
 

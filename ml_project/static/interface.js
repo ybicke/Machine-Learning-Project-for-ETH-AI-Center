@@ -1,11 +1,11 @@
 // HTML Elements
-const leftVideo = document.querySelector("#left-option > video");
-const rightVideo = document.querySelector("#right-option > video");
+const statusText = document.getElementById("status-text");
 
 const totalPairCountText = document.getElementById("total-pair-count");
 const ratedPairCountText = document.getElementById("rated-pair-count");
 
-const statusText = document.getElementById("status-text");
+const leftVideo = document.getElementById("left-video");
+const rightVideo = document.getElementById("right-video");
 
 // Restart both the left and the right videos
 async function restartVideos() {
@@ -68,10 +68,10 @@ async function registerPreference(preference) {
 
 // Add the click listeners to the corresponding buttons
 document
-  .querySelector("#left-option > button")
+  .getElementById("left-button")
   .addEventListener("click", () => registerPreference("left"));
 document
-  .querySelector("#right-option > button")
+  .getElementById("right-button")
   .addEventListener("click", () => registerPreference("right"));
 
 document
@@ -79,9 +79,9 @@ document
   .addEventListener("click", () => registerPreference("equal"));
 
 document
-  .getElementById("skip-button")
-  .addEventListener("click", () => registerPreference("skip"));
-
-document
   .getElementById("restart-button")
   .addEventListener("click", restartVideos);
+
+document
+  .getElementById("skip-button")
+  .addEventListener("click", () => registerPreference("skip"));
