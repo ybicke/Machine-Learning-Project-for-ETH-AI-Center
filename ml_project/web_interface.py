@@ -10,9 +10,6 @@ from uuid import uuid4
 
 from flask import Flask, abort, render_template, request, session
 
-# pylint: disable=fixme
-# TODO: move videos closer together
-
 current_path = Path(__file__).parent.resolve()
 static_path = path.join(current_path, "static")
 videos_path = path.join(static_path, "videos")
@@ -29,8 +26,8 @@ if not path.exists(preferences_path):
 # Helper functions
 
 
-def select_video_pair(preferences: List[List[str]], videos: List[str]):
-    """Select two videos to show based on the existing preference list."""
+def select_random_video_pair(preferences: List[List[str]], videos: List[str]):
+    """Select two random videos to show based on the existing preference list."""
     original_video_count = len(videos)
 
     preference_pairs = {}
@@ -47,13 +44,14 @@ def select_video_pair(preferences: List[List[str]], videos: List[str]):
         else:
             preference_pairs[preference[2]].add(preference[1])
 
-    # Find next random video pair (exclusing the already rated ones)
+    # Find next random video pair (excluding the already rated ones)
     next_left_video = None
     next_right_video = None
 
     is_new_pair_found = False
 
     while not is_new_pair_found:
+        # Generate random video index
         video_count = len(videos)
         video_indices = [randrange(video_count), randrange(video_count)]
 
@@ -127,13 +125,11 @@ def get_next_videos(preferences_file: TextIOWrapper):
     if rated_pair_count == total_pair_count:
         return result
 
-    (next_left_video, next_right_video) = select_video_pair(preferences, videos)
-
-    result = {**result, "status": "No new videos to compare were found"}
+    (next_left_video, next_right_video) = select_random_video_pair(preferences, videos)
 
     # Return if no videos were selected
     if next_left_video is None or next_right_video is None:
-        return result
+        return {**result, "status": "No new videos to compare were found"}
 
     # Return final result
     return {
