@@ -9,8 +9,9 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 1. Install [Python 3.11](https://www.python.org/downloads/)
 1. Install [Poetry](https://python-poetry.org/docs/#installation)
 1. Add `poetry` to the PATH (see step 3 in the [Poetry install instructions](https://python-poetry.org/docs/#installation))
-1. Some dependencies are needed to be installed manually. Run `pip install gym==0.21` to install them.
-1. Run `poetry install` in the project directory to install the remaining project dependencies.
+1. Run `poetry install` in the project directory to install dependencies of the project.
+*It might fail to install some dependencies. If it does, install these in the next step, then run `poetry install` again.*
+1. Some dependencies are needed to be installed manually. Run `poetry shell`, then `pip install gym==0.21` to install them (it's important that you ran `poetry install` before, so that the virtual environment is created).
 
 ### Set up VSCode (recommended)
 
