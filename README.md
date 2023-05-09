@@ -4,21 +4,25 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 
 ## Setting up
 
-### In VSCode (recommended)
+### Install dependencies
 
 1. Install [Python 3.11](https://www.python.org/downloads/)
 1. Install [Poetry](https://python-poetry.org/docs/#installation)
-1. Run `poetry install` in the project directory to install project dependencies
+1. Add `poetry` to the PATH (see step 3 in the [Poetry install instructions](https://python-poetry.org/docs/#installation))
+1. Some dependencies are needed to be installed manually. Run `pip install gym==0.21` to install them.
+1. Run `poetry install` in the project directory to install the remaining project dependencies.
+
+### Set up VSCode (recommended)
+
 1. In VSCode, open the command palette with `Ctrl+Shift+P` and choose `Python: Select Interpreter`, then select the virtual environment created by Poetry.
+  *Note: If the Poetry environment is not in the list, you can find the location of the environment by running `poetry show -v` and adding a new entry to the list.*
 1. Start a new terminal. VSCode will automatically activate the selected environment.
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 
 ### Without VSCode
 
-1. Install [Python 3.11](https://www.python.org/downloads/)
-1. Install [Poetry](https://python-poetry.org/docs/#installation)
-1. Run `poetry install` in the project directory to install project dependencies
+1. Run `poetry install` in the project directory to install the remaining project dependencies.
 1. Run `poetry shell` to activate the virtual environment
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. It's recommended to set up the extensions in your IDE equivalent to those listed above in the VSCode setup section for a more convenient development.
