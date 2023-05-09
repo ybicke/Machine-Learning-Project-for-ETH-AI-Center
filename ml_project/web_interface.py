@@ -91,12 +91,12 @@ def get_next_videos(preferences_file: TextIOWrapper):
         "nextRightVideo": "",
         "ratedPairCount": "?",
         "totalPairCount": total_pair_count,
-        "status": f'No video was found in "{videos_path}"',
+        "status": "",
     }
 
     # Return if there are no videos
     if video_count == 0:
-        return result
+        return {**result, "status": f'No video was found in "{videos_path}"'}
 
     videos_set = set(videos)
 
@@ -115,15 +115,15 @@ def get_next_videos(preferences_file: TextIOWrapper):
     ]
 
     rated_pair_count = len(preferences)
-    result = {
-        **result,
-        "ratedPairCount": rated_pair_count,
-        "status": "No more samples to rate. Thank you for providing your preferences!",
-    }
+    result = {**result, "ratedPairCount": rated_pair_count}
 
     # Return if all pairs were already rated by the current user
     if rated_pair_count == total_pair_count:
-        return result
+        return {
+            **result,
+            "status": "No more samples to rate."
+            " Thank you for providing your preferences!",
+        }
 
     (next_left_video, next_right_video) = select_random_video_pair(preferences, videos)
 
