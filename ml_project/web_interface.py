@@ -122,7 +122,8 @@ def get_next_videos(preferences_file: TextIOWrapper):
         return {
             **result,
             "status": "No more samples to rate."
-            " Thank you for providing your preferences!",
+            " Thank you for providing your preferences!"
+            " To start a new session, please clear the browser data for the website.",
         }
 
     (next_left_video, next_right_video) = select_random_video_pair(preferences, videos)
