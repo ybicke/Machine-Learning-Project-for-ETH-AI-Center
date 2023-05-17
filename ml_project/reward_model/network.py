@@ -1,20 +1,9 @@
-from abc import *
-
+"""Module for instantiating a neural network"""
 import torch
 import torch.nn as nn
 
 
-class NetworkBase(nn.Module, metaclass=ABCMeta):
-    @abstractmethod
-    def __init__(self):
-        super(NetworkBase, self).__init__()
-
-    @abstractmethod
-    def forward(self, x):
-        return x
-
-
-class Network(NetworkBase):
+class Network:
     def __init__(
         self,
         layer_num,
