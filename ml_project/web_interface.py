@@ -5,13 +5,10 @@ from io import TextIOWrapper
 from os import path
 from pathlib import Path
 from random import randrange
-from typing import Any, Callable
+from typing import Any, Callable, List
 from uuid import uuid4
 
 from flask import Flask, abort, render_template, request, session
-
-# pylint: disable=fixme
-# TODO: move videos closer together
 
 current_path = Path(__file__).parent.resolve()
 static_path = path.join(current_path, "static")
@@ -29,30 +26,9 @@ if not path.exists(preferences_path):
 # Helper functions
 
 
-# pylint: disable=too-many-branches
-def get_next_videos(preferences_file: TextIOWrapper):
-    """Find the next videos to be compared by the user."""
-    videos = [path.basename(video) for video in glob(f"{videos_path}/*.mp4")]
-
-    if len(videos) == 0:
-        return {}
-
-    videos_set = set(videos)
-    user_id = session["userId"]
-
-    # Skip header row
-    next(preferences_file)
-
-    # Filter preferences (e.g., videos that don't exist anymore,
-    # so we can use the length of list to see if all videos were compared to this one)
-    preferences = [
-        preference
-        for preference in (line.split(";") for line in preferences_file)
-        if preference[0] == user_id
-        and preference[1] in videos_set
-        or preference[2] in videos_set
-        or preference[0] != preference[1]
-    ]
+def select_random_video_pair(preferences: List[List[str]], videos: List[str]):
+    """Select two random videos to show based on the existing preference list."""
+    original_video_count = len(videos)
 
     preference_pairs = {}
 
@@ -68,15 +44,14 @@ def get_next_videos(preferences_file: TextIOWrapper):
         else:
             preference_pairs[preference[2]].add(preference[1])
 
-    # Find next random video pair (exclusing the already rated ones)
+    # Find next random video pair (excluding the already rated ones)
     next_left_video = None
     next_right_video = None
 
     is_new_pair_found = False
 
-    original_video_count = len(videos)
-
     while not is_new_pair_found:
+        # Generate random video index
         video_count = len(videos)
         video_indices = [randrange(video_count), randrange(video_count)]
 
@@ -100,14 +75,69 @@ def get_next_videos(preferences_file: TextIOWrapper):
             if len(preference_pairs[next_right_video]) == original_video_count - 1:
                 videos.remove(next_right_video)
 
-    if next_left_video is None or next_right_video is None:
-        return {}
+    return (next_left_video, next_right_video)
 
+
+def get_next_videos(preferences_file: TextIOWrapper):
+    """Find the next videos to be compared by the user."""
+    videos = [path.basename(video) for video in glob(f"{videos_path}/*.mp4")]
+
+    video_count = len(videos)
+    total_pair_count = int((video_count * (video_count - 1)) / 2)
+
+    # Prepare result dictionary
+    result = {
+        "nextLeftVideo": "",
+        "nextRightVideo": "",
+        "ratedPairCount": "?",
+        "totalPairCount": total_pair_count,
+        "status": "",
+    }
+
+    # Return if there are no videos
+    if video_count == 0:
+        return {**result, "status": f'No video was found in "{videos_path}"'}
+
+    videos_set = set(videos)
+
+    # Skip header row
+    next(preferences_file)
+
+    # Filter preferences (e.g., videos that don't exist anymore,
+    # so we can use the length of list to see if all videos were compared to this one)
+    preferences = [
+        preference
+        for preference in (line.split(";") for line in preferences_file)
+        if preference[0] == session["userId"]
+        and preference[1] in videos_set
+        or preference[2] in videos_set
+        or preference[0] != preference[1]
+    ]
+
+    rated_pair_count = len(preferences)
+    result = {**result, "ratedPairCount": rated_pair_count}
+
+    # Return if all pairs were already rated by the current user
+    if rated_pair_count == total_pair_count:
+        return {
+            **result,
+            "status": "No more samples to rate."
+            " Thank you for providing your preferences!"
+            " To start a new session, please clear the browser data for the website.",
+        }
+
+    (next_left_video, next_right_video) = select_random_video_pair(preferences, videos)
+
+    # Return if no videos were selected
+    if next_left_video is None or next_right_video is None:
+        return {**result, "status": "No new videos to compare were found"}
+
+    # Return final result
     return {
+        **result,
         "nextLeftVideo": next_left_video,
         "nextRightVideo": next_right_video,
-        "ratedPairCount": len(preferences),
-        "totalPairCount": int((original_video_count * (original_video_count - 1)) / 2),
+        "status": "",
     }
 
 
@@ -143,25 +173,13 @@ def home():
     with open(preferences_path, "r", encoding="utf-8") as preferences_file:
         next_videos = get_next_videos(preferences_file)
 
-    user_id = session["userId"]
-    error = (
-        f'No video was found in "{videos_path}"'
-        f'" that was not yet rated by user "{user_id}".'
-        if "nextLeftVideo" not in next_videos or "nextRightVideo" not in next_videos
-        else ""
-    )
-
     return render_template(
         "interface.html",
-        left_video=next_videos["nextLeftVideo"]
-        if "nextLeftVideo" in next_videos
-        else "",
-        right_video=next_videos["nextRightVideo"]
-        if "nextRightVideo" in next_videos
-        else "",
+        left_video=next_videos["nextLeftVideo"],
+        right_video=next_videos["nextRightVideo"],
         rated_pair_count=next_videos["ratedPairCount"],
         total_pair_count=next_videos["totalPairCount"],
-        error=error,
+        status=next_videos["status"],
     )
 
 

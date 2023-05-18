@@ -23,25 +23,25 @@
     <span id="total-pair-count">{{ total_pair_count }}</span>
   </p>
 
-  <div class="container">
-    <div id="left-option" class="option">
-      <video src="videos/{{ left_video }}" alt="Left option" width="500" controls autoplay muted></video>
-      <button>⬅️ Left is better</button>
-    </div>
+  <p id="status-text">{{ status }}</p>
 
-    <div class="middle">
-      <button id="restart-button">🔃 Restart</button>
-      <p id="status-text">{{ error }}</p>
-      <button id="equal-button">🤷‍♂️ Equally good</button>
-    </div>
-
-    <div id="right-option" class="option">
-      <video src="videos/{{ right_video }}" alt="Left option" width="500" controls autoplay muted></video>
-      <button>Right is better ➡️</button>
-    </div>
+  <div class="videos">
+    <video id="left-video" src="videos/{{ left_video }}" alt="Left option" width="500" controls autoplay muted></video>
+    <video id="right-video" src="videos/{{ right_video }}" alt="Right option" width="500" controls autoplay
+      muted></video>
   </div>
 
-  <button id="skip-button">Skip ⏭️</button>
+  <div class="preference-buttons">
+    <button id="left-button">⬅️ Left is better</button>
+    <button id="equal-button">🤷‍♂️ Equally good</button>
+    <button id="right-button">Right is better ➡️</button>
+  </div>
+
+  <div class="action-buttons">
+    <button id="restart-button">🔃 Restart</button>
+    <button id="skip-button">Skip ⏭️</button>
+  </div>
+
 </body>
 
 </html>
