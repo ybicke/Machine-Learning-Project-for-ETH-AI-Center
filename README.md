@@ -6,33 +6,56 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 
 ### Install dependencies
 
-1. Install [Python 3.11](https://www.python.org/downloads/)
-1. Install [Poetry](https://python-poetry.org/docs/#installation)
-1. Add `poetry` to the PATH (see step 3 in the [Poetry install instructions](https://python-poetry.org/docs/#installation))
+1. Install [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html)
+1. Run `conda create --name ml_project --file conda-[linux/osx/win]-64.lock` (replace `[linux/osx/win]` with your OS) to create the Anaconda environment.
+1. Run `conda activate ml_project` to activate the virtual environment.
 1. Run `poetry install` in the project directory to install dependencies of the project.
-   *It might fail to install some dependencies. If it does, install these in the next step, then run `poetry install` again.*
-1. Some dependencies are needed to be installed manually. Run `poetry shell`, then `pip install gym==0.21` to install them (it's important that you ran `poetry install` before, so that the virtual environment is created).
+1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/blob/9ea9bb000d6b8551b99f9aa440862e0c7f7b4191/README.md#requirements).
+1. Try installing `mujoco-py` by running `pip install mujoco-py==1.50.1.68`. If this fails, and your OS is Windows, proceed to [Install MuJoCo on Windows](#install-mujoco-on-windows) section.
+
+#### Install MuJoCo on Windows
+
+1. Install the C++ workload for Visual Studio 2019 by one of the following ways:
+   - Either download and install "Build Tools for Visual Studio 2019" from the [Visual Studio downloads](https://my.visualstudio.com/Downloads?q=Visual%20Studio%202019), then select "Desktop development with C++" from the workloads to install
+   - Or install the following Chocolatey packages: [Visual Studio 2019 build tools](https://community.chocolatey.org/packages/visualstudio2019buildtools), [Visual C++ build tools](https://community.chocolatey.org/packages/visualstudio2019-workload-vctools) (in this order)
+1. Open "x64 Native Tools Command Prompt for VS 2019" (in `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2019\Visual Studio Tools\VC`)
+1. Run `conda activate ml_project` to activate the Anaconda environment
+1. Try `pip install mujoco-py==1.50.1.68`. If it succeeds, proceed to the [Test MuJoCo](#test-mujoco) section.
+1. If the above command fails with "file name too long" error, use `git clone https://github.com/openai/mujoco-py` to clone the repository (clone it to a path that's not too long), then `git checkout a9f563cbb81d45f2379c6bcc4a4cd73fac09c4be` to check out the `1.50.1.68` version of the package.
+1. Still inside the x64 Native Tools Command Prompt and the Anaconda environment activated, navigate inside the cloned repository, then run `pip install -r requirements.txt` and `pip install -r requirements.dev.txt` to install the requirements.
+1. Run `python setup.py install` to install `mujoco-py` package from source.
+
+#### Test MuJoCo
+
+*Note: If you installed `mujoco-py` from source, you will also need to do the following steps in the x64 Native Tools Command Prompt.*
+
+1. Run `python` to start the python interpreter.
+1. If you are on Windows, run `import os; os.add_dll_directory("C://Users//<username>//.mujoco//mjpro150//bin")` (replace `username` with your user's folder name)
+1. Run `import mujoco_py` to import the library. This will also build the library if it hasn't been built before.
+
+If these steps succeed without errors, then the library is successfully installed.
 
 ### Set up VSCode (recommended)
 
-1. In VSCode, open the command palette with `Ctrl+Shift+P` and choose `Python: Select Interpreter`, then select the virtual environment created by Poetry.
-   *Note: If the Poetry environment is not in the list, you can find the location of the environment by running `poetry show -v` and adding a new entry to the list.*
+1. In VSCode, open the command palette with `Ctrl+Shift+P` and choose `Python: Select Interpreter`, then select the virtual environment created by Anaconda.
+   *Note: If the desired environment is not in the list, you can find the location of the environments by running `conda env list` and adding a new entry to the list.*
 1. Start a new terminal. VSCode will automatically activate the selected environment.
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 
 ### Without VSCode
 
-1. Run `poetry install` in the project directory to install the remaining project dependencies.
-1. Run `poetry shell` to activate the virtual environment
+1. Run `conda activate ml_project` to activate the Anaconda environment.
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. It's recommended to set up the extensions in your IDE equivalent to those listed above in the VSCode setup section for a more convenient development.
 
 ## Managing dependencies
 
-- To add a package to dependencies, use `poetry add <package>`
-- To add a package development dependencies (not necessary for running the code), use `poetry add -D <package>`
-- To remove a package from the dependencies, use `poetry remove <package>`
+- To add a package to dependencies, use `poetry add <package>` or `poetry add -D <package>` (for development dependencies)
+- If adding a package using Poetry fails (or if a version from Anaconda is needed), add it to `environment.yaml`, then run:
+  - `conda-lock -k explicit --conda mamba` to update the Anaconda lock file
+  - `mamba update --file conda-[linux/osx/win]-64.lock` (replace `[linux/osx/win]` with your OS) to update the packages in your current environment
+- To remove a package from the dependencies, use `poetry remove <package>` or remove them from `environment.yaml`. In the latter case, you will also need to run the first two commands from the above point as well to update the Anaconda lock files and current environment packages.
 
 ## Running the code
 

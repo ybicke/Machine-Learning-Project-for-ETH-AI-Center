@@ -1,9 +1,13 @@
 """Module for training an RL agent and saving videos and data of its trajectories."""
 import os
 import pickle
+from os import path
+from pathlib import Path
 
-import gymnasium as gym
-from stable_baselines3 import PPO, SAC
+os.add_dll_directory(path.join(Path.home(), ".mujoco", "mjpro150", "bin"))
+
+import gym  # noqa: E402
+from stable_baselines3 import PPO, SAC  # noqa: E402
 
 algo = "ppo"
 env_name = "HalfCheetah-v4"
@@ -19,7 +23,6 @@ env = gym.wrappers.RecordVideo(
     step_trigger=lambda n: n % record_video_interval == 0,
     video_length=video_length,
     name_prefix=f"{algo}-{env_name}",
-    disable_logger=True,
 )
 
 if algo == "sac":
@@ -44,7 +47,7 @@ for n_checkpoint, file in enumerate(os.listdir("models")):
             < (n_checkpoint + 1) * n_videos_per_model_checkpoint * record_video_interval
         ):
             action, _states = model.predict(obs, deterministic=True)
-            obs, reward, terminated, truncated, info = env.step(action)
+            obs, reward, terminated, info = env.step(action)
 
             i = n_step % record_video_interval
             if i < video_length:
@@ -57,7 +60,7 @@ for n_checkpoint, file in enumerate(os.listdir("models")):
                 if i == video_length - 1:
                     trajectory_dataset[n_step - video_length + 1] = trajectory
 
-            if terminated or truncated:
+            if terminated:
                 obs, info = env.reset()
             n_step += 1
 
