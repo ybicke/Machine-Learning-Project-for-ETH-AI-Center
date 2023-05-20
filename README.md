@@ -7,21 +7,21 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 ### Install dependencies
 
 1. Install [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html)
-1. Run `conda create --name ml_project --file conda-[linux/osx/win]-64.lock` (replace `[linux/osx/win]` with your OS) to create the Anaconda environment.
+1. Run `conda create --name ml_project --file conda-<linux/osx/win>-64.lock` (replace `<linux/osx/win>` with your OS) to create the Anaconda environment.
 1. Run `conda activate ml_project` to activate the virtual environment.
 1. Run `poetry install` in the project directory to install dependencies of the project.
-1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/blob/9ea9bb000d6b8551b99f9aa440862e0c7f7b4191/README.md#requirements).
-1. Try installing `mujoco-py` by running `pip install mujoco-py==1.50.1.68`. If this fails, and your OS is Windows, proceed to [Install MuJoCo on Windows](#install-mujoco-on-windows) section.
+1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/blob/9ea9bb000d6b8551b99f9aa440862e0c7f7b4191/README.md#install-mujoco).
+1. Try installing `mujoco-py` by running `pip install mujoco-py==1.50.1.68`. If this fails, and your OS is Windows, proceed to [Install MuJoCo on Windows](#install-mujoco-on-windows) section. If it installed successfully, jump to [Test MuJoCo](#test-mujoco).
 
 #### Install MuJoCo on Windows
 
-1. Install the C++ workload for Visual Studio 2019 by one of the following ways:
+1. Install the C++ workload for Visual Studio 2019 in one of the following ways:
    - Either download and install "Build Tools for Visual Studio 2019" from the [Visual Studio downloads](https://my.visualstudio.com/Downloads?q=Visual%20Studio%202019), then select "Desktop development with C++" from the workloads to install
    - Or install the following Chocolatey packages: [Visual Studio 2019 build tools](https://community.chocolatey.org/packages/visualstudio2019buildtools), [Visual C++ build tools](https://community.chocolatey.org/packages/visualstudio2019-workload-vctools) (in this order)
 1. Open "x64 Native Tools Command Prompt for VS 2019" (in `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2019\Visual Studio Tools\VC`)
 1. Run `conda activate ml_project` to activate the Anaconda environment
 1. Try `pip install mujoco-py==1.50.1.68`. If it succeeds, proceed to the [Test MuJoCo](#test-mujoco) section.
-1. If the above command fails with "file name too long" error, use `git clone https://github.com/openai/mujoco-py` to clone the repository (clone it to a path that's not too long), then `git checkout a9f563cbb81d45f2379c6bcc4a4cd73fac09c4be` to check out the `1.50.1.68` version of the package.
+1. If the above command fails with "file name too long" error, use `git clone https://github.com/openai/mujoco-py` to clone the repository (clone it to a path that's not very long), then `git checkout a9f563cbb81d45f2379c6bcc4a4cd73fac09c4be` to check out the `1.50.1.68` version of the package.
 1. Still inside the x64 Native Tools Command Prompt and the Anaconda environment activated, navigate inside the cloned repository, then run `pip install -r requirements.txt` and `pip install -r requirements.dev.txt` to install the requirements.
 1. Run `python setup.py install` to install `mujoco-py` package from source.
 
@@ -30,7 +30,7 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 *Note: If you installed `mujoco-py` from source, you will also need to do the following steps in the x64 Native Tools Command Prompt.*
 
 1. Run `python` to start the python interpreter.
-1. If you are on Windows, run `import os; os.add_dll_directory("C://Users//<username>//.mujoco//mjpro150//bin")` (replace `username` with your user's folder name)
+1. If you are on Windows, run `import os; os.add_dll_directory("C:\\Users\\<username>\\.mujoco\\mjpro150\\bin")` (replace `<username>` with your user's folder name). You will need to do this every time before importing `mujoco_py`, otherwise it will detect an import error and try to rebuild itself.
 1. Run `import mujoco_py` to import the library. This will also build the library if it hasn't been built before.
 
 If these steps succeed without errors, then the library is successfully installed.
@@ -51,11 +51,11 @@ If these steps succeed without errors, then the library is successfully installe
 
 ## Managing dependencies
 
-- To add a package to dependencies, use `poetry add <package>` or `poetry add -D <package>` (for development dependencies)
-- If adding a package using Poetry fails (or if a version from Anaconda is needed), add it to `environment.yaml`, then run:
+- To **add** a package to dependencies, use `poetry add <package>` for dependencies or `poetry add -D <package>` for development dependencies
+- If adding a package using Poetry fails (or if a version from Anaconda is needed), add it to `environment.yml`, then run:
   - `conda-lock -k explicit --conda mamba` to update the Anaconda lock file
-  - `mamba update --file conda-[linux/osx/win]-64.lock` (replace `[linux/osx/win]` with your OS) to update the packages in your current environment
-- To remove a package from the dependencies, use `poetry remove <package>` or remove them from `environment.yaml`. In the latter case, you will also need to run the first two commands from the above point as well to update the Anaconda lock files and current environment packages.
+  - `mamba update --file conda-<linux/osx/win>-64.lock` (replace `<linux/osx/win>` with your OS) to update the packages in your current environment
+- To **remove** a package from the dependencies, use `poetry remove <package>` or remove them from `environment.yaml`. In the latter case, you will also need to run the commands above to update the Anaconda lock files and current environment packages.
 
 ## Running the code
 
