@@ -1,5 +1,6 @@
 name: ml_project
 channels:
+  - nvidia
   - pytorch
   - conda-forge
   # We want to have a reproducible setup, so we don't want default channels,
@@ -7,8 +8,9 @@ channels:
   # be listed explicitly here.
   - nodefaults
 dependencies:
-  - python=3.10.* # or don't specify the version and use the latest stable Python
+  - python=3.10.*
   - mamba
   - pip # pip must be mentioned explicitly, or conda-lock will fail
   - poetry=1.*
+  - pytorch-cuda=11.8 # [not osx]
   - stable-baselines3=1.*
