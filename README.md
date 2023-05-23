@@ -11,6 +11,7 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 1. Run `conda activate ml_project` to activate the virtual environment.
 1. Run `poetry install` in the project directory to install dependencies of the project.
 1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/blob/9ea9bb000d6b8551b99f9aa440862e0c7f7b4191/README.md#install-mujoco).
+1. Add the `<user directory>\.mujoco\mjpro150\bin` folder (replace `<user directory>` with your user's directory name) to your PATH.
 1. Try installing `mujoco-py` by running `pip install mujoco-py==1.50.1.68`. If it succeeds, jump to [Test MuJoCo](#test-mujoco). If this fails, and your OS is Windows, proceed to [Install MuJoCo on Windows](#install-mujoco-on-windows) section.
 
 #### Install MuJoCo on Windows
@@ -44,6 +45,8 @@ If these steps succeed without errors, then the library is successfully installe
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 
+*Note: for now VSCode does not use the selected interpreter for git commands (see [issue](https://github.com/microsoft/vscode-python/issues/10165)), so you need to create commits from the command line.*
+
 ### Without VSCode
 
 1. Run `conda activate ml_project` to activate the Anaconda environment.
@@ -56,7 +59,7 @@ If these steps succeed without errors, then the library is successfully installe
 - If adding a package using Poetry fails (or if a version from Anaconda is needed), add the package and its version to `environment.yml`, then run:
   - `conda-lock -k explicit --conda mamba` to update the Anaconda lock file
   - `mamba update --file conda-<linux/osx/win>-64.lock` (replace `<linux/osx/win>` with your OS) to update the packages in your current environment
-- To **remove** a package from the dependencies, use `poetry remove <package>` or remove them from `environment.yaml`. In the latter case, you will also need to run the commands above to update the Anaconda lock files and current environment packages.
+- To **remove** a package from the dependencies, use `poetry remove <package>` or remove them from `environment.yml`. In the latter case, you will also need to run the commands above to update the Anaconda lock files and current environment packages.
 
 ## Running the code
 

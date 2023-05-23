@@ -22,6 +22,8 @@ python = "~3.10"
 flask = "^2.3.2"
 numpy = "^1.24.3"
 gymnasium = "^0.28.1"
+# Required to build mujoco-py
+cython = "^0.29.34"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
