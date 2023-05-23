@@ -20,8 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1fc01d8-04ff-4b2e-9c55-360db44d5498" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ml_project/reward_model/best_reward_model_state.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml_project/reward_model/best_reward_model_state.pth" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/reward_model/best_reward_model_state.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_0.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_0.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_10000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_10000.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_15000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_15000.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_20000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_20000.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_5000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_5000.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ml_project/rl/reward_data/ppo_HalfCheetah-v4_obs_reward_dataset.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/reward_data/ppo_HalfCheetah-v4_obs_reward_dataset.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ml_project/rl/videos/ppo-HalfCheetah-v4-step-0.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/videos/ppo-HalfCheetah-v4-step-0.mp4" afterDir="false" />
     </list>
@@ -49,7 +53,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.train_reward_model_validation">
+  <component name="RunManager" selected="Python.train_reward_model_dataLoader">
     <configuration name="generate_videos_and_transitions" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Machine-Learning-Project-for-ETH-AI-Center" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -63,6 +67,48 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ml_project/rl/generate_videos_and_transitions.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="train_reward_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Machine-Learning-Project-for-ETH-AI-Center" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ml_project/reward_model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ml_project/reward_model/train_reward_model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="train_reward_model_dataLoader" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Machine-Learning-Project-for-ETH-AI-Center" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ml_project/reward_model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ml_project/reward_model/train_reward_model_dataLoader.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -115,6 +161,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.train_reward_model_dataLoader" />
+        <item itemvalue="Python.train_reward_model" />
         <item itemvalue="Python.train_reward_model_validation" />
         <item itemvalue="Python.generate_videos_and_transitions" />
         <item itemvalue="Python.train_rl_agent" />
@@ -152,25 +200,25 @@
       <screen x="0" y="0" width="1463" height="775" />
     </state>
     <state x="512" y="142" key="FileChooserDialogImpl/0.0.1463.775@0.0.1463.775" timestamp="1684851126017" />
-    <state width="1442" height="263" key="GridCell.Tab.0.bottom" timestamp="1684852144753">
+    <state width="1442" height="263" key="GridCell.Tab.0.bottom" timestamp="1684852464951">
       <screen x="0" y="0" width="1463" height="775" />
     </state>
-    <state width="1442" height="263" key="GridCell.Tab.0.bottom/0.0.1463.775@0.0.1463.775" timestamp="1684852144753" />
+    <state width="1442" height="263" key="GridCell.Tab.0.bottom/0.0.1463.775@0.0.1463.775" timestamp="1684852464951" />
     <state width="2539" height="397" key="GridCell.Tab.0.bottom/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
-    <state width="1442" height="263" key="GridCell.Tab.0.center" timestamp="1684852144751">
+    <state width="1442" height="263" key="GridCell.Tab.0.center" timestamp="1684852464948">
       <screen x="0" y="0" width="1463" height="775" />
     </state>
-    <state width="1442" height="263" key="GridCell.Tab.0.center/0.0.1463.775@0.0.1463.775" timestamp="1684852144751" />
+    <state width="1442" height="263" key="GridCell.Tab.0.center/0.0.1463.775@0.0.1463.775" timestamp="1684852464948" />
     <state width="2539" height="397" key="GridCell.Tab.0.center/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
-    <state width="1442" height="263" key="GridCell.Tab.0.left" timestamp="1684852144751">
+    <state width="1442" height="263" key="GridCell.Tab.0.left" timestamp="1684852464947">
       <screen x="0" y="0" width="1463" height="775" />
     </state>
-    <state width="1442" height="263" key="GridCell.Tab.0.left/0.0.1463.775@0.0.1463.775" timestamp="1684852144751" />
+    <state width="1442" height="263" key="GridCell.Tab.0.left/0.0.1463.775@0.0.1463.775" timestamp="1684852464947" />
     <state width="2539" height="397" key="GridCell.Tab.0.left/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
-    <state width="1442" height="263" key="GridCell.Tab.0.right" timestamp="1684852144753">
+    <state width="1442" height="263" key="GridCell.Tab.0.right" timestamp="1684852464949">
       <screen x="0" y="0" width="1463" height="775" />
     </state>
-    <state width="1442" height="263" key="GridCell.Tab.0.right/0.0.1463.775@0.0.1463.775" timestamp="1684852144753" />
+    <state width="1442" height="263" key="GridCell.Tab.0.right/0.0.1463.775@0.0.1463.775" timestamp="1684852464949" />
     <state width="2539" height="397" key="GridCell.Tab.0.right/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
     <state x="782" y="341" key="SettingsEditor" timestamp="1684835896366">
       <screen x="0" y="0" width="2560" height="1392" />
