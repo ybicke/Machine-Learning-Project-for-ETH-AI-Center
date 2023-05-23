@@ -19,8 +19,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bfc97013-1480-4885-9351-fe3a423f4e34" name="Default Changelist" comment="">
+    <list default="true" id="a1fc01d8-04ff-4b2e-9c55-360db44d5498" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ml_project/rl/reward_data/ppo_HalfCheetah-v4_obs_reward_dataset.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/reward_data/ppo_HalfCheetah-v4_obs_reward_dataset.pkl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +40,6 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -96,7 +96,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="bfc97013-1480-4885-9351-fe3a423f4e34" name="Default Changelist" comment="" />
+      <changelist id="a1fc01d8-04ff-4b2e-9c55-360db44d5498" name="Default Changelist" comment="" />
       <created>1684835800945</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -117,21 +117,29 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="2539" height="397" key="GridCell.Tab.0.bottom" timestamp="1684837247025">
-      <screen x="0" y="0" width="2560" height="1392" />
+    <state x="512" y="142" key="FileChooserDialogImpl" timestamp="1684851126017">
+      <screen x="0" y="0" width="1463" height="775" />
     </state>
+    <state x="512" y="142" key="FileChooserDialogImpl/0.0.1463.775@0.0.1463.775" timestamp="1684851126017" />
+    <state width="1442" height="193" key="GridCell.Tab.0.bottom" timestamp="1684851146424">
+      <screen x="0" y="0" width="1463" height="775" />
+    </state>
+    <state width="1442" height="193" key="GridCell.Tab.0.bottom/0.0.1463.775@0.0.1463.775" timestamp="1684851146424" />
     <state width="2539" height="397" key="GridCell.Tab.0.bottom/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
-    <state width="2539" height="397" key="GridCell.Tab.0.center" timestamp="1684837247025">
-      <screen x="0" y="0" width="2560" height="1392" />
+    <state width="1442" height="193" key="GridCell.Tab.0.center" timestamp="1684851146424">
+      <screen x="0" y="0" width="1463" height="775" />
     </state>
+    <state width="1442" height="193" key="GridCell.Tab.0.center/0.0.1463.775@0.0.1463.775" timestamp="1684851146424" />
     <state width="2539" height="397" key="GridCell.Tab.0.center/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
-    <state width="2539" height="397" key="GridCell.Tab.0.left" timestamp="1684837247025">
-      <screen x="0" y="0" width="2560" height="1392" />
+    <state width="1442" height="193" key="GridCell.Tab.0.left" timestamp="1684851146422">
+      <screen x="0" y="0" width="1463" height="775" />
     </state>
+    <state width="1442" height="193" key="GridCell.Tab.0.left/0.0.1463.775@0.0.1463.775" timestamp="1684851146422" />
     <state width="2539" height="397" key="GridCell.Tab.0.left/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
-    <state width="2539" height="397" key="GridCell.Tab.0.right" timestamp="1684837247025">
-      <screen x="0" y="0" width="2560" height="1392" />
+    <state width="1442" height="193" key="GridCell.Tab.0.right" timestamp="1684851146424">
+      <screen x="0" y="0" width="1463" height="775" />
     </state>
+    <state width="1442" height="193" key="GridCell.Tab.0.right/0.0.1463.775@0.0.1463.775" timestamp="1684851146424" />
     <state width="2539" height="397" key="GridCell.Tab.0.right/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
     <state x="782" y="341" key="SettingsEditor" timestamp="1684835896366">
       <screen x="0" y="0" width="2560" height="1392" />
