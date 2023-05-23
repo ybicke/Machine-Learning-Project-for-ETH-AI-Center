@@ -1,68 +1,95 @@
 """Module for training an RL agent and saving videos and data of its trajectories."""
+# ruff: noqa: E402
+# pylint: disable=wrong-import-position
+
 import os
 import pickle
 from os import path
 from pathlib import Path
+from typing import Type, Union
 
 os.add_dll_directory(path.join(Path.home(), ".mujoco", "mjpro150", "bin"))
 
-import gym  # noqa: E402
-from stable_baselines3 import PPO, SAC  # noqa: E402
+import gym
+from stable_baselines3.ppo.ppo import PPO
+from stable_baselines3.sac.sac import SAC
 
-algo = "ppo"
-env_name = "HalfCheetah-v4"
+ALGORITHM = "ppo"
+ENVIRONMENT_NAME = "HalfCheetah-v3"
 
-record_video_interval = 500
-video_length = 100
-n_videos_per_model_checkpoint = 5
+RECORD_INTERVAL = 500
+RECORD_LENGTH = 100
+VIDEOS_PER_CHECKPOINT = 5
 
-env = gym.make(env_name, render_mode="rgb_array")
-env = gym.wrappers.RecordVideo(
-    env,
-    video_folder="videos",
-    step_trigger=lambda n: n % record_video_interval == 0,
-    video_length=video_length,
-    name_prefix=f"{algo}-{env_name}",
-)
+script_path = Path(__file__).parent.resolve()
 
-if algo == "sac":
-    ALGO = SAC
-elif algo == "ppo":
-    ALGO = PPO
-else:
-    raise NotImplementedError(f"{algo} not implemented")
 
-trajectory_dataset = {}
-trajectory = []
+def record_videos(
+    algorithm: Union[Type[PPO], Type[SAC]], environment: gym.wrappers.RecordVideo
+):
+    """Record videos of the training environment."""
+    trajectory_dataset = {}
+    trajectory = []
 
-n_step = 0
-for n_checkpoint, file in enumerate(os.listdir("models")):
-    if file.startswith(algo + "_" + env_name):
-        file_name = f"models/{file[:-4]}"
-        model = ALGO.load(file_name)
+    n_step = 0
 
-        obs, info = env.reset()
-        while (
-            n_step
-            < (n_checkpoint + 1) * n_videos_per_model_checkpoint * record_video_interval
-        ):
-            action, _states = model.predict(obs, deterministic=True)
-            obs, reward, terminated, info = env.step(action)
+    for n_checkpoint, file in enumerate(os.listdir(path.join(script_path, "models"))):
+        if file.startswith(ALGORITHM + "_" + ENVIRONMENT_NAME):
+            model = algorithm.load(f"models/{file[:-4]}")
 
-            i = n_step % record_video_interval
-            if i < video_length:
-                if i == 0:
-                    trajectory = []
+            obs, _info = environment.reset()
+            while n_step < (n_checkpoint + 1) * VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:
+                action, _states = model.predict(obs, deterministic=True)
+                obs, reward, terminated, _info = environment.step(action)
 
-                transition = {"obs": obs, "reward": reward}
-                trajectory.append(transition)
+                i = n_step % RECORD_INTERVAL
+                if i < RECORD_LENGTH:
+                    if i == 0:
+                        trajectory = []
 
-                if i == video_length - 1:
-                    trajectory_dataset[n_step - video_length + 1] = trajectory
+                    trajectory.append({"obs": obs, "reward": reward})
 
-            if terminated:
-                obs, info = env.reset()
-            n_step += 1
+                    if i == RECORD_LENGTH - 1:
+                        trajectory_dataset[n_step - RECORD_LENGTH + 1] = trajectory
 
-with open(f"reward_data/{algo}_{env_name}_obs_reward_dataset.pkl", "wb") as handle:
-    pickle.dump(trajectory_dataset, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                if terminated:
+                    obs, _info = environment.reset()
+
+                n_step += 1
+
+    return trajectory_dataset
+
+
+def main():
+    """Run video generation."""
+    env = gym.make(ENVIRONMENT_NAME)
+    env = gym.wrappers.RecordVideo(
+        env,
+        video_folder=path.join(script_path, "videos"),
+        step_trigger=lambda n: n % RECORD_INTERVAL == 0,
+        video_length=RECORD_LENGTH,
+        name_prefix=f"{ALGORITHM}-{ENVIRONMENT_NAME}",
+    )
+
+    if ALGORITHM == "sac":
+        ALGO = SAC
+    elif ALGORITHM == "ppo":
+        ALGO = PPO
+    else:
+        raise NotImplementedError(f"{ALGORITHM} not implemented")
+
+    trajectory_dataset = record_videos(ALGO, env)
+
+    with open(
+        path.join(
+            script_path,
+            "reward_data",
+            f"{ALGORITHM}_{ENVIRONMENT_NAME}_obs_reward_dataset.pkl",
+        ),
+        "wb",
+    ) as handle:
+        pickle.dump(trajectory_dataset, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+if __name__ == "__main__":
+    main()
