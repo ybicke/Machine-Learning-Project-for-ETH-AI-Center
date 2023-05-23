@@ -45,7 +45,7 @@ If these steps succeed without errors, then the library is successfully installe
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 
-*Note: for now VSCode does not use the selected interpreter for git commands (see [issue](https://github.com/microsoft/vscode-python/issues/10165)), so you need to create commits from the command line.*
+*Note: for now VSCode does not use the selected interpreter for Git commands (see [issue](https://github.com/microsoft/vscode-python/issues/10165)), so you need to create commits from changes that contain Python code from the command line (pre-commit hooks need to run from the right Python environment).*
 
 ### Without VSCode
 
