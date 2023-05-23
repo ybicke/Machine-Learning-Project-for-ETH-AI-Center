@@ -20,18 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc97013-1480-4885-9351-fe3a423f4e34" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/Machine-Learning-Project-for-ETH-AI-Center.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_0.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_0.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_10000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_10000.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_15000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_15000.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_20000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_20000.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_5000.zip" beforeDir="false" afterPath="$PROJECT_DIR$/ml_project/rl/models/ppo_HalfCheetah-v4_5000.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,24 +114,25 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="2539" height="398" key="GridCell.Tab.0.bottom" timestamp="1684836539616">
+    <state width="2539" height="397" key="GridCell.Tab.0.bottom" timestamp="1684837247025">
       <screen x="0" y="0" width="2560" height="1392" />
     </state>
-    <state width="2539" height="398" key="GridCell.Tab.0.bottom/0.0.2560.1392@0.0.2560.1392" timestamp="1684836539616" />
-    <state width="2539" height="398" key="GridCell.Tab.0.center" timestamp="1684836539616">
+    <state width="2539" height="397" key="GridCell.Tab.0.bottom/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
+    <state width="2539" height="397" key="GridCell.Tab.0.center" timestamp="1684837247025">
       <screen x="0" y="0" width="2560" height="1392" />
     </state>
-    <state width="2539" height="398" key="GridCell.Tab.0.center/0.0.2560.1392@0.0.2560.1392" timestamp="1684836539616" />
-    <state width="2539" height="398" key="GridCell.Tab.0.left" timestamp="1684836539616">
+    <state width="2539" height="397" key="GridCell.Tab.0.center/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
+    <state width="2539" height="397" key="GridCell.Tab.0.left" timestamp="1684837247025">
       <screen x="0" y="0" width="2560" height="1392" />
     </state>
-    <state width="2539" height="398" key="GridCell.Tab.0.left/0.0.2560.1392@0.0.2560.1392" timestamp="1684836539616" />
-    <state width="2539" height="398" key="GridCell.Tab.0.right" timestamp="1684836539616">
+    <state width="2539" height="397" key="GridCell.Tab.0.left/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
+    <state width="2539" height="397" key="GridCell.Tab.0.right" timestamp="1684837247025">
       <screen x="0" y="0" width="2560" height="1392" />
     </state>
-    <state width="2539" height="398" key="GridCell.Tab.0.right/0.0.2560.1392@0.0.2560.1392" timestamp="1684836539616" />
+    <state width="2539" height="397" key="GridCell.Tab.0.right/0.0.2560.1392@0.0.2560.1392" timestamp="1684837247025" />
     <state x="782" y="341" key="SettingsEditor" timestamp="1684835896366">
       <screen x="0" y="0" width="2560" height="1392" />
     </state>
