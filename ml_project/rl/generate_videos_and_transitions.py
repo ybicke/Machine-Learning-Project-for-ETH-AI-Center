@@ -1,4 +1,4 @@
-"""Module for training an RL agent and saving videos and data of its trajectories."""
+"""Module for saving videos and data of an RL agent's trajectories after training."""
 # ruff: noqa: E402
 # pylint: disable=wrong-import-position
 
@@ -22,6 +22,7 @@ RECORD_LENGTH = 100
 VIDEOS_PER_CHECKPOINT = 5
 
 script_path = Path(__file__).parent.resolve()
+models_path = path.join(script_path, "models")
 
 
 def record_videos(
@@ -33,9 +34,9 @@ def record_videos(
 
     n_step = 0
 
-    for n_checkpoint, file in enumerate(os.listdir(path.join(script_path, "models"))):
+    for n_checkpoint, file in enumerate(os.listdir(models_path)):
         if file.startswith(ALGORITHM + "_" + ENVIRONMENT_NAME):
-            model = algorithm.load(f"models/{file[:-4]}")
+            model = algorithm.load(path.join(models_path, file[:-4]))
 
             obs, _info = environment.reset()
             while n_step < (n_checkpoint + 1) * VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:

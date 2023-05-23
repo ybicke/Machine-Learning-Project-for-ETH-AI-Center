@@ -1,24 +1,54 @@
-import gymnasium as gym
-from stable_baselines3 import PPO, SAC
+"""Module for training an RL agent."""
+# ruff: noqa: E402
+# pylint: disable=wrong-import-position
 
-algo = "ppo"
-env_name = "HalfCheetah-v4"
+import os
+from os import path
+from pathlib import Path
 
-env = gym.make(env_name)
+os.add_dll_directory(path.join(Path.home(), ".mujoco", "mjpro150", "bin"))
 
-if algo == "sac":
-    model = SAC("MlpPolicy", env, verbose=1)
-elif algo == "ppo":
-    model = PPO("MlpPolicy", env, verbose=1)
-else:
-    raise NotImplementedError(f"{algo} not implemented")
+import gym
+from stable_baselines3.ppo.ppo import PPO
+from stable_baselines3.sac.sac import SAC
 
-ITER = 5
-# STEPS_PER_ITER = 60000
-STEPS_PER_ITER = 5000
+ALGORITHM = "ppo"
+ENVIRONMENT_NAME = "HalfCheetah-v3"
 
-for i in range(ITER):
-    model.learn(
-        total_timesteps=STEPS_PER_ITER, reset_num_timesteps=False, log_interval=4
-    )
-    model.save(f"models/{algo}_{env_name}_{STEPS_PER_ITER*i}")
+script_path = Path(__file__).parent.resolve()
+models_path = path.join(script_path, "models")
+
+env = gym.make(ENVIRONMENT_NAME)
+
+
+def main():
+    """Run RL agent training."""
+    if ALGORITHM == "sac":
+        model = SAC("MlpPolicy", env, verbose=1)
+    elif ALGORITHM == "ppo":
+        model = PPO("MlpPolicy", env, verbose=1)
+    else:
+        raise NotImplementedError(f"{ALGORITHM} not implemented")
+
+    iterations = 5
+
+    # STEPS_PER_ITER = 60000
+    steps_per_iteration = 5000
+
+    for i in range(iterations):
+        model.learn(
+            total_timesteps=steps_per_iteration,
+            reset_num_timesteps=False,
+            log_interval=4,
+        )
+
+        model.save(
+            path.join(
+                models_path,
+                f"{ALGORITHM}_{ENVIRONMENT_NAME}_{steps_per_iteration*i}",
+            )
+        )
+
+
+if __name__ == "__main__":
+    main()

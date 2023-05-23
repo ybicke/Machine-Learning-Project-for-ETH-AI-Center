@@ -16,6 +16,7 @@ packages = [{ include = "ml_project" }]
 [tool.poetry.scripts]
 gridworld = "ml_project.gridWorld:main"
 generate = "ml_project.rl.generate_videos_and_transitions:main"
+train = "ml_project.rl.train_rl_agent:main"
 
 [tool.poetry.dependencies]
 python = "~3.10"
