@@ -17,14 +17,18 @@ packages = [{ include = "ml_project" }]
 gridworld = "ml_project.gridWorld:main"
 generate = "ml_project.rl.generate_videos_and_transitions:main"
 train = "ml_project.rl.train_rl_agent:main"
+render = "ml_project.rl.render:main"
 
 [tool.poetry.dependencies]
 python = "~3.10"
 flask = "^2.3.2"
 numpy = "^1.24.3"
-gymnasium = "^0.28.1"
-# Required to build mujoco-py
-cython = "^0.29.34"
+# Required for gymnasium video recorder
+moviepy = "^1.0.3"
+# Exact versions are required for gym==0.21
+mujoco = "2.2"
+mujoco_py = "<2.2,>=2.1"
+imageio = ">=2.14.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

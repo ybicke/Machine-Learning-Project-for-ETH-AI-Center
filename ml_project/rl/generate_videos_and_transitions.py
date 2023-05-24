@@ -1,16 +1,12 @@
 """Module for saving videos and data of an RL agent's trajectories after training."""
-# ruff: noqa: E402
-# pylint: disable=wrong-import-position
-
 import os
 import pickle
 from os import path
 from pathlib import Path
 from typing import Type, Union
 
-os.add_dll_directory(path.join(Path.home(), ".mujoco", "mjpro150", "bin"))
-
 import gym
+from gym.wrappers import RecordVideo
 from stable_baselines3.ppo.ppo import PPO
 from stable_baselines3.sac.sac import SAC
 
@@ -38,10 +34,12 @@ def record_videos(
         if file.startswith(ALGORITHM + "_" + ENVIRONMENT_NAME):
             model = algorithm.load(path.join(models_path, file[:-4]))
 
-            obs, _info = environment.reset()
+            obs = environment.reset()
             while n_step < (n_checkpoint + 1) * VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:
                 action, _states = model.predict(obs, deterministic=True)
                 obs, reward, terminated, _info = environment.step(action)
+
+                environment.render(mode="rgb_array")
 
                 i = n_step % RECORD_INTERVAL
                 if i < RECORD_LENGTH:
@@ -54,7 +52,7 @@ def record_videos(
                         trajectory_dataset[n_step - RECORD_LENGTH + 1] = trajectory
 
                 if terminated:
-                    obs, _info = environment.reset()
+                    obs = environment.reset()
 
                 n_step += 1
 
@@ -64,7 +62,7 @@ def record_videos(
 def main():
     """Run video generation."""
     env = gym.make(ENVIRONMENT_NAME)
-    env = gym.wrappers.RecordVideo(
+    env = RecordVideo(
         env,
         video_folder=path.join(script_path, "videos"),
         step_trigger=lambda n: n % RECORD_INTERVAL == 0,

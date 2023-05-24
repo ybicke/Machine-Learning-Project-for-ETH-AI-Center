@@ -2,47 +2,36 @@
 
 This is the repository for the AI Center Projects in Machine Learning Research course in 2023 Spring.
 
+<!-- TODO: check if pre-commit hooks work in VScode in WSL -->
+
 ## Setting up
+
+*Note: if you are using Windows, you will need to either use a Linux VM or WSL (see [WSL install instructions](#setting-up-wsl-recommended-for-windows) below). In both cases, you will need to use `linux` as your OS identifier (e.g., for creating the environment with Anaconda).*
+
+### Setting up WSL (recommended for Windows)
+
+1. Set up [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+1. Open WSL command line and clone the repo using it (to a directory NOT starting with `/mnt/`) instead of using a Windows command prompt of PowerShell. This will make the development environment faster.
+1. Add `export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0` to your shell profile to enable WSL to open windows and display GUIs.
+1. If you are using VSCode, run `code .` inside the project directory to open it.
 
 ### Install dependencies
 
-1. Install [Anaconda](https://docs.anaconda.com/free/anaconda/install/index.html)
-1. Navigate to the project directory, then run `conda create --name ml_project --file conda-<linux/osx/win>-64.lock` (replace `<linux/osx/win>` with your OS) to create the Anaconda environment.
+1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (Anaconda also works, but is not necessary)
+1. Navigate to the project directory, then run `conda create --name ml_project --file conda-<linux/osx>-64.lock` (replace `<linux/osx>` with your OS) to create the Anaconda environment.
 1. Run `conda activate ml_project` to activate the virtual environment.
 1. Run `poetry install` in the project directory to install dependencies of the project.
-1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/blob/9ea9bb000d6b8551b99f9aa440862e0c7f7b4191/README.md#install-mujoco).
-1. Add the `<user directory>\.mujoco\mjpro150\bin` folder (replace `<user directory>` with your user's directory name) to your PATH.
-1. Try installing `mujoco-py` by running `pip install mujoco-py==1.50.1.68`. If it succeeds, jump to [Test MuJoCo](#test-mujoco). If this fails, and your OS is Windows, proceed to [Install MuJoCo on Windows](#install-mujoco-on-windows) section.
-
-#### Install MuJoCo on Windows
-
-1. Install the C++ workload for Visual Studio 2019 in one of the following ways:
-   - If you already have Visual Studio 2019 or earlier installed, make sure the C++ build workload is also installed
-   - Otherwise either download and install the latest "Build Tools for Visual Studio 2019" from the [Visual Studio downloads](https://my.visualstudio.com/Downloads?q=Visual%20Studio%202019), then select "Desktop development with C++" from the workloads to install
-   - Or install the following Chocolatey packages: [Visual Studio 2019 build tools](https://community.chocolatey.org/packages/visualstudio2019buildtools), [Visual C++ 2019 build tools](https://community.chocolatey.org/packages/visualstudio2019-workload-vctools) (in this order)
-1. Open "x64 Native Tools Command Prompt for VS 2019" (in `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2019\Visual Studio Tools\VC`)
-1. Run `conda activate ml_project` to activate the Anaconda environment
-1. Try `pip install mujoco-py==1.50.1.68`. If it succeeds, proceed to the [Test MuJoCo](#test-mujoco) section.
-1. If the above command fails with "file name too long" error, use `git clone https://github.com/openai/mujoco-py` to clone the repository (clone it to a path that's not very long), then `git checkout a9f563cbb81d45f2379c6bcc4a4cd73fac09c4be` to check out the `1.50.1.68` version of the package.
-1. Still inside the x64 Native Tools Command Prompt and the Anaconda environment activated, navigate inside the cloned repository, then run `pip install -r requirements.txt` and `pip install -r requirements.dev.txt` to install the requirements.
-1. Run `python setup.py install` to install `mujoco-py` package from source.
-
-#### Test MuJoCo
-
-*Note: If you installed `mujoco-py` from source, you will also need to do the following steps in the x64 Native Tools Command Prompt.*
-
-1. Run `python` to start the python interpreter.
-1. If you are on Windows, run `import os; os.add_dll_directory("C:\\Users\\<username>\\.mujoco\\mjpro150\\bin")` (replace `<username>` with your user's folder name). You will need to do this every time before importing `mujoco_py`, otherwise it will detect an import error and try to rebuild itself.
-1. Run `import mujoco_py` to import the library. This will also build the library if it hasn't been built before.
-
-If these steps succeed without errors, then the library is successfully installed.
+1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/#install-mujoco).
+1. Add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.mujoco/mujoco210/bin` to your shell profile (e.g., to the end of `~/.bashrc` or `~/.zshrc` or similar) and start a new shell to make MuJoCo discoverable.
+1. Make sure all the required libraries are installed by running `sudo apt-get install libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf`
+1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 
 ### Set up VSCode (recommended)
 
-1. In VSCode, open the command palette with `Ctrl+Shift+P` and choose `Python: Select Interpreter`, then select the virtual environment created by Anaconda.
+1. Install and open [VSCode](https://code.visualstudio.com/download)
+1. Open the command palette, choose `Python: Select Interpreter`, then select the virtual environment created by Anaconda.
    *Note: If the desired environment is not in the list, you can find the location of the environments by running `conda env list` and adding a new entry to the list.*
 1. Start a new terminal. VSCode will automatically activate the selected environment.
-1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 
 *Note: for now VSCode does not use the selected interpreter for Git commands (see [issue](https://github.com/microsoft/vscode-python/issues/10165)), so you need to create commits from changes that contain Python code from the command line (pre-commit hooks need to run from the right Python environment).*
@@ -50,7 +39,6 @@ If these steps succeed without errors, then the library is successfully installe
 ### Without VSCode
 
 1. Run `conda activate ml_project` to activate the Anaconda environment.
-1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 1. It's recommended to set up the extensions in your IDE equivalent to those listed above in the VSCode setup section for a more convenient development.
 
 ## Managing dependencies
@@ -58,12 +46,14 @@ If these steps succeed without errors, then the library is successfully installe
 - To **add** a package to dependencies, use `poetry add <package>` for dependencies or `poetry add -D <package>` for development dependencies
 - If adding a package using Poetry fails (or if a version from Anaconda is needed), add the package and its version to `environment.yml`, then run:
   - `conda-lock -k explicit --conda mamba` to update the Anaconda lock file
-  - `mamba update --file conda-<linux/osx/win>-64.lock` (replace `<linux/osx/win>` with your OS) to update the packages in your current environment
+  - `mamba update --file conda-<linux/osx>-64.lock` (replace `<linux/osx>` with your OS) to update the packages in your current environment
 - To **remove** a package from the dependencies, use `poetry remove <package>` or remove them from `environment.yml`. In the latter case, you will also need to run the commands above to update the Anaconda lock files and current environment packages.
 
 ## Running the code
 
 You can run scripts specified in `pyproject.toml` with `poetry run <script name>`. For example, to run the `gridworld` script, run `poetry run gridworld`.
+
+To run the training of RL agents, run `poetry run train`. To generate videos of the trained agents, run `poetry run generate`.
 
 To launch the web interface, run:
 

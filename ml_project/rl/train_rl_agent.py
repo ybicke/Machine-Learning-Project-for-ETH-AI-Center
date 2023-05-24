@@ -1,12 +1,8 @@
 """Module for training an RL agent."""
 # ruff: noqa: E402
 # pylint: disable=wrong-import-position
-
-import os
 from os import path
 from pathlib import Path
-
-os.add_dll_directory(path.join(Path.home(), ".mujoco", "mjpro150", "bin"))
 
 import gym
 from stable_baselines3.ppo.ppo import PPO
