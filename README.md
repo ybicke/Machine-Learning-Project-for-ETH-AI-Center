@@ -6,14 +6,15 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 
 ## Setting up
 
-*Note: if you are using Windows, you will need to either use a Linux VM or WSL (see [WSL install instructions](#setting-up-wsl-recommended-for-windows) below). In both cases, you will need to use `linux` as your OS identifier (e.g., for creating the environment with Anaconda).*
+*Note: if you are using Windows, you will need to either use a Linux VM or WSL (see [WSL setup instructions](#setting-up-wsl-recommended-for-windows) below). In both cases you will need to use `linux` as your OS identifier (e.g., for creating the environment with Anaconda).*
 
 ### Setting up WSL (recommended for Windows)
 
 1. Set up [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 1. Open WSL command line and clone the repo using it (to a directory NOT starting with `/mnt/`) instead of using a Windows command prompt of PowerShell. This will make the development environment faster.
-1. Add `export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0` to your shell profile to enable WSL to open windows and display GUIs.
+1. Add `export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0` to your shell profile (e.g., to the end of `~/.bashrc` or `~/.zshrc` or similar) to enable WSL to open windows and display GUIs.
 1. If you are using VSCode, run `code .` inside the project directory to open it.
+1. Do all further setup inside the WSL command line.
 
 ### Install dependencies
 
@@ -22,7 +23,7 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 1. Run `conda activate ml_project` to activate the virtual environment.
 1. Run `poetry install` in the project directory to install dependencies of the project.
 1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/#install-mujoco).
-1. Add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.mujoco/mujoco210/bin` to your shell profile (e.g., to the end of `~/.bashrc` or `~/.zshrc` or similar) and start a new shell to make MuJoCo discoverable.
+1. Add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.mujoco/mujoco210/bin` to your shell profile and start a new shell to make MuJoCo discoverable.
 1. Make sure all the required libraries are installed by running `sudo apt-get install libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf`
 1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 
