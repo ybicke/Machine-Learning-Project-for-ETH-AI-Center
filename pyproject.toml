@@ -23,8 +23,6 @@ render = "ml_project.rl.render:main"
 python = "~3.10"
 flask = "^2.3.2"
 numpy = "^1.24.3"
-# Required for gymnasium video recorder
-moviepy = "^1.0.3"
 # Exact versions are required for gym==0.21
 mujoco = "2.2"
 mujoco_py = "<2.2,>=2.1"
