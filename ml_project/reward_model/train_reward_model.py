@@ -20,13 +20,13 @@ def load_data(file_path):
 def partition_data(trajectories, batch_size):
     """Partition the trajectories into non-overlapping batches of pairs."""
     indices = list(trajectories.keys())
-    random.shuffle(indices)  # shuffle the indices to introduce randomness
+    # random.shuffle(indices)  # shuffle the indices to introduce randomness
 
     # Pair indices
-    pairs = [(indices[i], indices[i + 1]) for i in range(0, len(indices) - 1, 2)]
+    pairs = [(a, b) for idx, a in enumerate(indices) for b in indices[idx + 1 :]]
     # Handle case of an odd number of indices by pairing last one with a random one
-    if len(indices) % 2 == 1:
-        pairs.append((indices[-1], random.choice(indices[:-1])))
+    # if len(indices) % 2 == 1:
+    #    pairs.append((indices[-1], random.choice(indices[:-1])))
 
     # Partition pairs into batches
     partitions = [pairs[i : i + batch_size] for i in range(0, len(pairs), batch_size)]
@@ -156,7 +156,7 @@ def main():
     # File paths
     current_path = Path(__file__).parent.resolve()
     folder_path = path.join(current_path, "../rl/reward_data")
-    file_name = path.join(folder_path, "ppo_HalfCheetah-v4_obs_reward_dataset.pkl")
+    file_name = path.join(folder_path, "ppo_HalfCheetah-v3_obs_reward_dataset.pkl")
 
     # Load data
     trajectories = load_data(file_name)
@@ -169,7 +169,7 @@ def main():
     reward_model = Network(layer_num=3, input_dim=17, hidden_dim=256, output_dim=1)
 
     # Train model
-    train_reward_model(reward_model, trajectories, epochs=100, batch_size=1)
+    train_reward_model(reward_model, trajectories, epochs=100, batch_size=32)
 
     # That's how we can call the best model parameters for later use
     # model = Network(...)  # create a new instance of your model
