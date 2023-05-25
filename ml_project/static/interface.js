@@ -1,11 +1,11 @@
 // HTML Elements
-const leftVideo = document.querySelector("#left-option > video");
-const rightVideo = document.querySelector("#right-option > video");
+const statusText = document.getElementById("status-text");
 
 const totalPairCountText = document.getElementById("total-pair-count");
 const ratedPairCountText = document.getElementById("rated-pair-count");
 
-const statusText = document.getElementById("status-text");
+const leftVideo = document.getElementById("left-video");
+const rightVideo = document.getElementById("right-video");
 
 // Restart both the left and the right videos
 async function restartVideos() {
@@ -48,31 +48,30 @@ async function registerPreference(preference) {
     return;
   }
 
-  if (!response.nextLeftVideo || !response.nextRightVideo) {
-    statusText.innerText =
-      "No more samples to rate. Thank you for providing your preferences!";
-
-    leftVideo.src = "";
-    rightVideo.src = "";
-
-    return;
+  if (typeof response.ratedPairCount === "number") {
+    ratedPairCountText.innerText = response.ratedPairCount;
   }
 
-  leftVideo.src = `videos/${response.nextLeftVideo}`;
-  rightVideo.src = `videos/${response.nextRightVideo}`;
+  if (typeof response.totalPairCount === "number") {
+    totalPairCountText.innerText = response.totalPairCount;
+  }
 
-  totalPairCountText.innerText =
-    typeof response.totalPairCount === "number" ? response.totalPairCount : "?";
-  ratedPairCountText.innerText =
-    typeof response.ratedPairCount === "number" ? response.ratedPairCount : "?";
+  leftVideo.src = response.nextLeftVideo
+    ? `videos/${response.nextLeftVideo}`
+    : "";
+  rightVideo.src = response.nextRightVideo
+    ? `videos/${response.nextRightVideo}`
+    : "";
+
+  statusText.innerHTML = response.status;
 }
 
 // Add the click listeners to the corresponding buttons
 document
-  .querySelector("#left-option > button")
+  .getElementById("left-button")
   .addEventListener("click", () => registerPreference("left"));
 document
-  .querySelector("#right-option > button")
+  .getElementById("right-button")
   .addEventListener("click", () => registerPreference("right"));
 
 document
@@ -80,9 +79,9 @@ document
   .addEventListener("click", () => registerPreference("equal"));
 
 document
-  .getElementById("skip-button")
-  .addEventListener("click", () => registerPreference("skip"));
-
-document
   .getElementById("restart-button")
   .addEventListener("click", restartVideos);
+
+document
+  .getElementById("skip-button")
+  .addEventListener("click", () => registerPreference("skip"));

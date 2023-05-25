@@ -15,21 +15,28 @@ packages = [{ include = "ml_project" }]
 
 [tool.poetry.scripts]
 gridworld = "ml_project.gridWorld:main"
+generate = "ml_project.rl.generate_videos_and_transitions:main"
+train = "ml_project.rl.train_rl_agent:main"
+render = "ml_project.rl.render:main"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "~3.10"
 flask = "^2.3.2"
 numpy = "^1.24.3"
-torch = "^2.0.1"
-gymnasium = "^0.28.1"
-mujoco-py = "^2.1.2.14"
+# Exact versions are required for gym==0.21
+mujoco = "2.2"
+mujoco_py = "<2.2,>=2.1"
+imageio = ">=2.14.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
+conda-lock = "^1.4.0"
 pre-commit = "^3.3.1"
 pylint = "^2.17.3"
 pyright = "^1.1.306"
 ruff = "^0.0.264"
+# Need to fix this, otherwise Poetry upgrades it and breaks itself
+urllib3 = "<2"
 
 [build-system]
 requires = ["poetry-core"]
@@ -39,7 +46,7 @@ build-backend = "poetry.core.masonry.api"
 line-length = 88
 
 [tool.pyright]
-pythonVersion = "3.11"
+pythonVersion = "3.10"
 pythonPlatform = "All"
 
 include = ["ml_project"]
