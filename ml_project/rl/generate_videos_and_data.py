@@ -66,7 +66,7 @@ def main():
     env = gym.make(ENVIRONMENT_NAME)
     env = RecordVideo(
         env,
-        video_folder=path.join(script_path, "videos"),
+        video_folder=path.join(script_path, "..", "static", "videos"),
         step_trigger=lambda n: n % RECORD_INTERVAL == 0,
         video_length=RECORD_LENGTH,
         name_prefix=f"{ALGORITHM}-{ENVIRONMENT_NAME}",

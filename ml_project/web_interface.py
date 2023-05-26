@@ -11,8 +11,7 @@ from uuid import uuid4
 from flask import Flask, abort, render_template, request, session
 
 current_path = Path(__file__).parent.resolve()
-static_path = path.join(current_path, "static")
-videos_path = path.join(static_path, "videos")
+videos_path = path.join(current_path, "static", "videos")
 
 output_path = path.join(current_path, "output")
 preferences_path = path.join(output_path, "preferences.csv")
@@ -89,7 +88,7 @@ def get_next_videos(preferences_file: TextIOWrapper):
     result = {
         "nextLeftVideo": "",
         "nextRightVideo": "",
-        "ratedPairCount": "?",
+        "ratedPairCount": "0",
         "totalPairCount": total_pair_count,
         "status": "",
     }
