@@ -13,7 +13,6 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 1. Set up [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 1. Open WSL command line and clone the repo using it (to a path NOT starting with `/mnt/`) instead of using a Windows command prompt of PowerShell. This will make the development environment faster.
 1. Add `export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0` to your shell profile (e.g., to the end of `~/.bashrc` or `~/.zshrc` or similar) to enable WSL to open windows and display GUIs.
-1. To install VSCode inside WSL
 1. If you are using VSCode, run `code .` inside the project directory to open it (or if you've opened the project before, you can access it from `File -> Open Recent`). See [Open a WSL project in Visual Studio Code](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode#open-a-wsl-project-in-visual-studio-code) for more details.
 1. Do all further setup inside the WSL command line or from the terminal of VSCode opened from WSL.
 
