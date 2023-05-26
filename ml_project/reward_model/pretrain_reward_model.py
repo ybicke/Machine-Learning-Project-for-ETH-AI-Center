@@ -1,4 +1,4 @@
-"""Module for pre-training a reward model from trajectory data (observations and rewards)."""
+"""Module for pre-training a reward model from trajectory data."""
 import math
 import pickle
 from os import path
@@ -6,10 +6,11 @@ from pathlib import Path
 
 import numpy as np
 import torch
-import torch.optim as optim
-from network import Network
+from torch import optim
 from torch.nn import MSELoss
 from torch.utils.data import DataLoader, Dataset, random_split
+
+from .network import Network
 
 
 class TrajectoryDataset(Dataset):
@@ -33,7 +34,7 @@ class TrajectoryDataset(Dataset):
 
 def train_reward_model(
     reward_model: Network,
-    dataset: Dataset,
+    dataset: TrajectoryDataset,
     epochs: int,
     batch_size: int,
     split_ratio: float = 0.8,
@@ -66,7 +67,10 @@ def train_reward_model(
         # Training
         train_losses = []
         for obs, reward in train_loader:
-            loss = loss_fn(reward_model(obs.float()), reward.float().unsqueeze(1))
+            loss = loss_fn(
+                reward_model(obs.to(device).float()),
+                reward.to(device).float().unsqueeze(1),
+            )
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -77,12 +81,16 @@ def train_reward_model(
         with torch.no_grad():
             val_losses = []
             for obs, reward in val_loader:
-                loss = loss_fn(reward_model(obs.float()), reward.float().unsqueeze(1))
+                loss = loss_fn(
+                    reward_model(obs.to(device).float()),
+                    reward.to(device).float().unsqueeze(1),
+                )
                 val_losses.append(loss.item())
             avg_val_loss = np.mean(val_losses)
 
         print(
-            f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss}, Val Loss: {avg_val_loss}"
+            f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss}"
+            ", Val Loss: {avg_val_loss}"
         )
 
         # Early stopping
@@ -102,9 +110,12 @@ def train_reward_model(
             no_improvement_epochs += 1
             if no_improvement_epochs >= patience:
                 print(
-                    f"No improvement after for {patience} epochs, therefore stopping training."
+                    f"No improvement after for {patience} epochs"
+                    ", therefore stopping training."
                 )
-                break  # break instead of return, so that the function can return the best model state
+                # break instead of return, so that the function can return the
+                # best model state
+                break
 
     # load the weights and biases for the best model state during training
     reward_model.load_state_dict(best_model_state)
@@ -130,4 +141,5 @@ def main():
 
 
 if __name__ == "__main__":
+    main()
     main()

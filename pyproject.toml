@@ -62,4 +62,4 @@ stubPath = "python-type-stubs"
 generated-members = "torch.*"
 
 [tool.pylint.MAIN]
-disable = "duplicate-code,too-many-arguments"
+disable = "duplicate-code,too-many-arguments,too-many-locals"
