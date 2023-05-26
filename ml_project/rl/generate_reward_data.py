@@ -1,4 +1,4 @@
-"""Module for saving data (state observations and rewards) of an RL agent's trajectories after training."""
+"""Module for saving data of an RL agent's trajectories after training."""
 import os
 import pickle
 from os import path

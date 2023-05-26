@@ -12,13 +12,19 @@ from torch.utils.data import DataLoader, Dataset, random_split
 
 from .network import Network
 
+# File paths
+script_path = Path(__file__).parent.resolve()
+file_path = path.join(
+    script_path, "..", "rl", "reward_data", "ppo_HalfCheetah-v3_obs_reward_dataset.pkl"
+)
+
 
 class TrajectoryDataset(Dataset):
     """PyTorch Dataset for loading trajectories data."""
 
-    def __init__(self, file_path):
+    def __init__(self, dataset_path: str):
         """Initialize dataset."""
-        with open(file_path, "rb") as handle:
+        with open(dataset_path, "rb") as handle:
             self.trajectories = pickle.load(handle)
         self.data = [t["obs"] for t in self.trajectories]
         self.target = [t["reward"] for t in self.trajectories]
@@ -90,7 +96,7 @@ def train_reward_model(
 
         print(
             f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss}"
-            ", Val Loss: {avg_val_loss}"
+            f", Val Loss: {avg_val_loss}"
         )
 
         # Early stopping
@@ -100,10 +106,9 @@ def train_reward_model(
             best_model_state = (
                 reward_model.state_dict()
             )  # save the parameters of the best model
-            current_path = Path(__file__).parent.resolve()
             torch.save(
                 best_model_state,
-                path.join(current_path, "models", "reward_model_pretrained.pth"),
+                path.join(script_path, "models", "reward_model_pretrained.pth"),
             )  # save the parameters for later use to disk
             no_improvement_epochs = 0
         else:
@@ -125,11 +130,6 @@ def train_reward_model(
 
 def main():
     """Run reward model pre-training."""
-    # File paths
-    current_path = Path(__file__).parent.resolve()
-    folder_path = path.join(current_path, "../rl/reward_data")
-    file_path = path.join(folder_path, "ppo_HalfCheetah-v3_obs_reward_dataset.pkl")
-
     # Load data
     dataset = TrajectoryDataset(file_path)
 
@@ -141,5 +141,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
     main()

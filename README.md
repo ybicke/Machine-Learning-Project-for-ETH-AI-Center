@@ -2,7 +2,7 @@
 
 This is the repository for the AI Center Projects in Machine Learning Research course in 2023 Spring.
 
-<!-- TODO: check if pre-commit hooks work in VScode in WSL -->
+<!-- TODO: check if we can remove pytorch stubs with 2.*, clean conda, mamba -->
 
 ## Setting up
 
@@ -30,11 +30,11 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 
 ### Setting up VSCode (recommended)
 
-1. Install and open [VSCode](https://code.visualstudio.com/download)
+1. Install and open [VSCode](https://code.visualstudio.com/download)\
+1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 1. Open the command palette, choose `Python: Select Interpreter`, then select the virtual environment created by Anaconda.
    *Note: If the desired environment is not in the list, you can find the location of the environments by running `conda env list`, then add the interpreter as a new entry.*
 1. Start a new terminal. VSCode will automatically activate the selected environment.
-1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 
 *Note: for now VSCode does not use the selected interpreter for Git commands (see [issue](https://github.com/microsoft/vscode-python/issues/10165)), so you need to create commits from changes that contain Python code from the command line (pre-commit hooks need to run from the right Python environment).*
 
@@ -56,6 +56,8 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 You can run scripts specified in `pyproject.toml` with `poetry run <script name>`. For example, to run the `gridworld` script, run `poetry run gridworld` (you might also need to run `poetry install` before to update the dependencies).
 
 To run the training of RL agents, run `poetry run train`. To generate videos of the trained agents, run `poetry run generate`.
+
+To run individual scripts, use `python -m <module path>`. E.g., if you want to run the script `ml_project/reward_model/pretrain_reward_model.py`, run `python -m ml_project.reward_model.pretrain_reward_model`.
 
 To launch the web interface, run:
 

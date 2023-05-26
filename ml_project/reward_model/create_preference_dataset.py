@@ -5,12 +5,27 @@ from os import path
 from pathlib import Path
 
 import numpy as np
+from numpy.typing import NDArray
+
+current_path = Path(__file__).parent.resolve()
+preference_data_path = path.join(current_path, "..", "output", "preferences.csv")
+observation_data_path = path.join(
+    current_path,
+    "..",
+    "rl",
+    "observation_data_corresponding_to_videos",
+    "ppo_HalfCheetah-v3_obs_reward_dataset.pkl",
+)
 
 
-def extract_number(text: str):
-    """Extract step number that allows to get the observations corresponding to the video."""
-    text = re.search("[0-9]+\.", text).group()
-    num = int(re.sub("\D", "", text))
+def extract_number(input_text: str):
+    """Extract step number to get the observations corresponding to the video."""
+    text = re.search(r"[0-9]+\.", input_text)
+    assert text is not None
+    text = text.group()
+
+    num = int(re.sub(r"\D", "", text))
+
     return num
 
 
@@ -30,7 +45,7 @@ def save_data(file_path, data):
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def get_sorted_indices(preferences_raw: np.array):
+def get_sorted_indices(preferences_raw: NDArray):
     """Get tuples of indices of videos/trajectories sorted by preference."""
     indices = []
     for line in preferences_raw:
@@ -56,20 +71,11 @@ def get_sorted_indices(preferences_raw: np.array):
 
 
 def main():
-    """Run dataset creation."""
-    current_path = Path(__file__).parent.resolve()
-    preference_data_path = path.join(current_path, "..", "output", "preferences.csv")
-    observation_data_path = path.join(
-        current_path,
-        "..",
-        "rl",
-        "observation_data_corresponding_to_videos",
-        "ppo_HalfCheetah-v3_obs_reward_dataset.pkl",
-    )
-
+    """Run preference creation."""
     preferences_raw = np.loadtxt(
         preference_data_path, dtype=str, delimiter=";", skiprows=1
     )
+
     preference_indices = get_sorted_indices(preferences_raw)
 
     observations = load_data(observation_data_path)

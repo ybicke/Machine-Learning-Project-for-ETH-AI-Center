@@ -14,8 +14,9 @@ dependencies:
   - mamba
   - pip # pip must be mentioned explicitly, or conda-lock will fail
   - poetry=1.*
-  - pytorch=1.*
-  - pytorch-cuda=11.8 # [not osx]
+  - pytorch=2.*
+  - pytorch-cuda=11.8 # [linux]
+  - pytorch-lightning=2.*
   - stable-baselines3=1.* # Requires gym==0.21, which cannot be installed using pip
 
 platforms:
