@@ -1,4 +1,4 @@
-"""Module for saving videos and data (state observations) of an RL agent's trajectories after training."""
+"""Module for saving videos and data of an RL agent's trajectories."""
 import os
 import pickle
 from os import path
@@ -9,6 +9,8 @@ import gym
 from gym.wrappers import RecordVideo
 from stable_baselines3.ppo.ppo import PPO
 from stable_baselines3.sac.sac import SAC
+
+from ..types import Step, Trajectories
 
 ALGORITHM = "ppo"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
@@ -25,8 +27,8 @@ def record_videos(
     algorithm: Union[Type[PPO], Type[SAC]], environment: gym.wrappers.RecordVideo
 ):
     """Record videos of the training environment."""
-    obs_dataset = {}
-    observations = []
+    obs_dataset: Trajectories = {}
+    observations: list[Step] = []
 
     n_step = 0
 
@@ -37,7 +39,7 @@ def record_videos(
             obs = environment.reset()
             while n_step < (n_checkpoint + 1) * VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:
                 action, _states = model.predict(obs, deterministic=True)
-                obs, reward, terminated, _info = environment.step(action)
+                obs, _reward, terminated, _info = environment.step(action)
 
                 environment.render(mode="rgb_array")
 
