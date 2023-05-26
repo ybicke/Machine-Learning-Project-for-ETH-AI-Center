@@ -19,16 +19,16 @@ class TrajectoryDataset(Dataset):
         """Initialize dataset."""
         with open(file_path, "rb") as handle:
             self.trajectories = pickle.load(handle)
-        self.X = [t["obs"] for t in self.trajectories]
-        self.y = [t["reward"] for t in self.trajectories]
+        self.data = [t["obs"] for t in self.trajectories]
+        self.target = [t["reward"] for t in self.trajectories]
 
     def __len__(self):
         """Return size of dataset."""
-        return len(self.X)
+        return len(self.data)
 
     def __getitem__(self, idx):
         """Return item with given index."""
-        return self.X[idx], self.y[idx]
+        return self.data[idx], self.target[idx]
 
 
 def train_reward_model(
