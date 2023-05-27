@@ -14,10 +14,11 @@ repository = "https://github.com/xiaoxiaoshikui/Machine-Learning-Project-for-ETH
 packages = [{ include = "ml_project" }]
 
 [tool.poetry.scripts]
-gridworld = "ml_project.gridWorld:main"
-generate = "ml_project.rl.generate_videos_and_transitions:main"
 train = "ml_project.rl.train_rl_agent:main"
-render = "ml_project.rl.render:main"
+generate = "ml_project.rl.generate_videos_and_transitions:main"
+create_dataset = "ml_project.reward_data.create_preference_dataset:main"
+pretrain_reward = "ml_project.reward_data.pretrain_reward_model:main"
+finetune_reward = "ml_project.reward_data.finetune_reward_model:main"
 
 [tool.poetry.dependencies]
 python = "~3.10"
@@ -58,9 +59,6 @@ typeCheckingMode = "basic"
 
 useLibraryCodeForTypes = true
 stubPath = "python-type-stubs"
-
-[tool.pylint.TYPECHECK]
-generated-members = "torch.*"
 
 [tool.pylint.MAIN]
 disable = "duplicate-code,too-many-arguments,too-many-locals"
