@@ -16,10 +16,10 @@ packages = [{ include = "ml_project" }]
 [tool.poetry.scripts]
 train = "ml_project.rl.train_rl_agent:main"
 generate = "ml_project.rl.generate_videos_and_transitions:main"
-create_dataset = "ml_project.reward_data.create_preference_dataset:main"
+create_dataset = "ml_project.reward_model.create_preference_dataset:main"
 generate_reward = "ml_project.rl.generate_reward_data:main"
-pretrain_reward = "ml_project.reward_data.pretrain_reward_model:main"
-finetune_reward = "ml_project.reward_data.finetune_reward_model:main"
+pretrain_reward = "ml_project.reward_model.pretrain_reward_model:main"
+finetune_reward = "ml_project.reward_model.finetune_reward_model:main"
 
 [tool.poetry.dependencies]
 python = "~3.10"
@@ -60,6 +60,9 @@ typeCheckingMode = "basic"
 
 useLibraryCodeForTypes = true
 stubPath = "python-type-stubs"
+
+[tool.pylint.TYPECHECK]
+generated-members = "torch.*"
 
 [tool.pylint.MAIN]
 disable = "duplicate-code,too-many-arguments,too-many-locals"

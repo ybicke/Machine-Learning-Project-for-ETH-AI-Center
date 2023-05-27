@@ -61,7 +61,7 @@ class LightningNetwork(LightningModule):
 
     def configure_optimizers(self):
         """Configure optimizer to optimize the neural network."""
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
         return optimizer
 
     def _calculate_loss(self, batch: Tensor):
