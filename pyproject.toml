@@ -15,7 +15,7 @@ packages = [{ include = "ml_project" }]
 
 [tool.poetry.scripts]
 train = "ml_project.rl.train_rl_agent:main"
-generate = "ml_project.rl.generate_videos_and_transitions:main"
+generate = "ml_project.rl.generate_videos_and_data:main"
 create_dataset = "ml_project.reward_model.create_preference_dataset:main"
 generate_reward = "ml_project.rl.generate_reward_data:main"
 pretrain_reward = "ml_project.reward_model.pretrain_reward_model:main"
