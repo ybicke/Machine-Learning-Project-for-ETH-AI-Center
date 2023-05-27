@@ -17,6 +17,7 @@ packages = [{ include = "ml_project" }]
 train = "ml_project.rl.train_rl_agent:main"
 generate = "ml_project.rl.generate_videos_and_transitions:main"
 create_dataset = "ml_project.reward_data.create_preference_dataset:main"
+generate_reward = "ml_project.rl.generate_reward_data:main"
 pretrain_reward = "ml_project.reward_data.pretrain_reward_model:main"
 finetune_reward = "ml_project.reward_data.finetune_reward_model:main"
 

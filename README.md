@@ -54,14 +54,15 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 
 ## Running the code
 
-You can run scripts specified in `pyproject.toml` with `poetry run <script name>`. For example, to run the `gridworld` script, run `poetry run gridworld` (you might also need to run `poetry install` before to update the dependencies).
-
-To run the training of RL agents, run `poetry run train`. To generate videos of the trained agents, run `poetry run generate`.
+You can run scripts specified in `pyproject.toml` with `poetry run <script name>`. For example, to run the `train` script, run `poetry run train` (you might also need to run `poetry install` before to update the dependencies).
 
 To run individual scripts, use `python -m <module path>`. E.g., if you want to run the script `ml_project/reward_model/pretrain_reward_model.py`, run `python -m ml_project.reward_model.pretrain_reward_model`.
 
-To launch the web interface, run:
+### Reproducing the results
 
-```bash
-poetry run flask --app ml_project/web_interface run
-```
+1. Run `poetry run train` to rain the baseline RL agents (you can change the algorithm by editing `ml_project/rl/train_rl_agent.py`)
+1. Run `poetry run generate` to generate videos for the trained agent (you can change the algorithm by editing `ml_project/rl/generate_videos_and_data.py`)
+1. Run `poetry run flask --app ml_project/web_interface run` to start the web interface to collect preferences. Preferences are written in `output/preferences.csv`.
+1. Run `poetry run generate_reward` to generate rewards for observations on trajectories made by the trained RL agent (you can change the algorithm by editing `ml_project/rl/generate_reward_data.py`).
+1. Run `poetry run pretrain_reward` to pretrain the reward model on the generated reward data.
+1. Run `poetry run finetune_reward` to finetune the reward model using the preferences collected.
