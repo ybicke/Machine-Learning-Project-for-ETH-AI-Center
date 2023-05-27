@@ -19,15 +19,15 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 ### Installing dependencies
 
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (Anaconda also works, but is not necessary)
-   - https://dev.to/sfpear/miniconda-in-wsl-3642
-3. Navigate to the project directory, then run `conda create --name ml_project --file conda-<linux/osx>-64.lock` (replace `<linux/osx>` with your OS) to create the Anaconda environment.
-4. Run `conda activate ml_project` to activate the virtual environment.
-5. Run `poetry install` in the project directory to install dependencies of the project.
-6. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/#install-mujoco).
-7. Add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.mujoco/mujoco210/bin` to your shell profile and start a new shell to make MuJoCo discoverable.
-8. Make sure all the required libraries are installed by running `sudo apt install gcc libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf`
-9. If you don't have `ffmpeg` installed yet, [install it on your system](https://ffmpeg.org/download.html) or run `pip install imageio-ffmpeg` to install it in the project locally.
-10. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
+   - To install it in WSL, see the [instructions here](https://dev.to/sfpear/miniconda-in-wsl-3642)
+1. Navigate to the project directory, then run `conda create --name ml_project --file conda-<linux/osx>-64.lock` (replace `<linux/osx>` with your OS) to create the Anaconda environment.
+1. Run `conda activate ml_project` to activate the virtual environment.
+1. Run `poetry install` in the project directory to install dependencies of the project.
+1. To install MuJoCo, follow the [instructions in the GitHub repo](https://github.com/openai/mujoco-py/#install-mujoco).
+1. Add `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.mujoco/mujoco210/bin` to your shell profile and start a new shell to make MuJoCo discoverable.
+1. Make sure all the required libraries are installed by running `sudo apt install gcc libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf`
+1. If you don't have `ffmpeg` installed yet, [install it on your system](https://ffmpeg.org/download.html) or run `pip install imageio-ffmpeg` to install it in the project locally.
+1. Run `pre-commit install` to install pre-commit hooks (they will run some checks before each commit to the repo).
 
 ### Setting up VSCode (recommended)
 
