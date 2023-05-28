@@ -57,7 +57,7 @@ class LightningNetwork(LightningModule):
     def validation_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for validation."""
         loss = self._calculate_loss(batch)
-        self.log("val_loss", loss)
+        self.log("val_loss", loss, prog_bar=True)
 
     def configure_optimizers(self):
         """Configure optimizer to optimize the neural network."""
