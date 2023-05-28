@@ -60,9 +60,10 @@ To run individual scripts, use `python -m <module path>`. E.g., if you want to r
 
 ### Reproducing the results
 
-1. Run `poetry run train` to rain the baseline RL agents (you can change the algorithm by editing `ml_project/rl/train_rl_agent.py`)
+1. Run `poetry run train` to train the baseline RL agents (you can change the algorithm by editing `ml_project/rl/train_rl_agent.py`)
 1. Run `poetry run generate` to generate videos for the trained agent (you can change the algorithm by editing `ml_project/rl/generate_videos_and_data.py`)
 1. Run `poetry run flask --app ml_project/web_interface run` to start the web interface to collect preferences. Preferences are written in `output/preferences.csv`.
 1. Run `poetry run generate_reward` to generate rewards for observations on trajectories made by the trained RL agent (you can change the algorithm by editing `ml_project/rl/generate_reward_data.py`).
 1. Run `poetry run pretrain_reward` to pretrain the reward model on the generated reward data.
+1. Run `poetry run create_dataset` to create a data set using the collected preferences.
 1. Run `poetry run finetune_reward` to finetune the reward model using the preferences collected.
