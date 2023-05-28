@@ -14,7 +14,7 @@ observation_data_path = path.join(
     "..",
     "rl",
     "observation_data_corresponding_to_videos",
-    "ppo_HalfCheetah-v3_obs_reward_dataset.pkl",
+    "ppo_HalfCheetah-v3_obs_dataset.pkl",
 )
 
 

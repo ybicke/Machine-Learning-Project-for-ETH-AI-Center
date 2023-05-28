@@ -32,8 +32,8 @@ class PreferenceDataset(Dataset):
         steps = [
             (
                 (
-                    step1["obs"].astype("float32"),
-                    trajectory2[index]["obs"].astype("float32"),
+                    step1.astype("float32"),
+                    trajectory2[index].astype("float32"),
                 )
                 for [index, step1] in enumerate(trajectory1)
             )
