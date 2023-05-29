@@ -5,13 +5,16 @@ import pickle
 from itertools import chain
 from os import path
 from pathlib import Path
+from typing import Union
 
+import numpy
 import torch
-from pytorch_lightning import Trainer
+from pytorch_lightning import LightningModule, Trainer
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader, Dataset, random_split
 
-from .network import LightningNetwork
+from ..types import FloatNDArray, Trajectory
+from .network import LightningNetwork, LightningRNNNetwork
 
 # Utilize Tensor Cores of NVIDIA GPUs
 torch.set_float32_matmul_precision("high")
@@ -27,17 +30,17 @@ class PreferenceDataset(Dataset):
     def __init__(self, dataset_path: str):
         """Initialize dataset."""
         with open(dataset_path, "rb") as handle:
-            self.pairs_of_trajectories = pickle.load(handle)
+            trajectory_pairs: list[tuple[Trajectory, Trajectory]] = pickle.load(handle)
 
         steps = [
             (
                 (
-                    step1.astype("float32"),
-                    trajectory2[index].astype("float32"),
+                    trajectory1[index]["obs"].astype("float32"),
+                    trajectory2[index]["obs"].astype("float32"),
                 )
-                for [index, step1] in enumerate(trajectory1)
+                for index in range(len(trajectory1))
             )
-            for (trajectory1, trajectory2) in self.pairs_of_trajectories
+            for (trajectory1, trajectory2) in trajectory_pairs
         ]
 
         self.steps = list(chain.from_iterable(steps))
@@ -46,14 +49,55 @@ class PreferenceDataset(Dataset):
         """Return size of dataset."""
         return len(self.steps)
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, index: int):
         """Return item with given index."""
-        return self.steps[idx][0], self.steps[idx][1]
+        return self.steps[index][0], self.steps[index][1]
+
+
+# pylint: disable=too-few-public-methods
+class MultiStepPreferenceDataset(Dataset):
+    """PyTorch Dataset for loading preference data for multiple steps."""
+
+    def __init__(self, dataset_path: str, sequence_length: int):
+        """Initialize dataset."""
+        with open(dataset_path, "rb") as handle:
+            trajectory_pairs: list[tuple[Trajectory, Trajectory]] = pickle.load(handle)
+
+        sequence_pairs: list[tuple[FloatNDArray, FloatNDArray]] = []
+
+        for trajectory1, trajectory2 in trajectory_pairs:
+            for index in range(len(trajectory1) - sequence_length + 1):
+                # find the end of this pattern
+                end_index = index + sequence_length
+
+                # gather input and output parts of the pattern
+                sequence_pair = (
+                    numpy.array(
+                        [step["obs"] for step in trajectory1[index:end_index]],
+                        dtype=numpy.float32,
+                    ),
+                    numpy.array(
+                        [step["obs"] for step in trajectory2[index:end_index]],
+                        dtype=numpy.float32,
+                    ),
+                )
+                sequence_pairs.append(sequence_pair)
+
+        self.sequence_pairs = sequence_pairs
+        self.sequence_length = sequence_length
+
+    def __len__(self):
+        """Return size of dataset."""
+        return len(self.sequence_pairs)
+
+    def __getitem__(self, index: int):
+        """Return items with given index."""
+        return self.sequence_pairs[index]
 
 
 def train_reward_model(
-    reward_model: LightningNetwork,
-    dataset: PreferenceDataset,
+    reward_model: LightningModule,
+    dataset: Union[PreferenceDataset, MultiStepPreferenceDataset],
     epochs: int,
     batch_size: int,
     split_ratio: float = 0.8,
@@ -95,16 +139,23 @@ def train_reward_model(
 
 def main():
     """Run reward model fine-tuning."""
-    # Load data
+    # Train MLP
     dataset = PreferenceDataset(file_path)
 
-    # Initialize network
     reward_model = LightningNetwork(
-        layer_num=3, input_dim=17, hidden_dim=256, output_dim=1
+        input_dim=17, hidden_dim=256, layer_num=3, output_dim=1
     )
 
-    # Train model
-    train_reward_model(reward_model, dataset, epochs=100, batch_size=32)
+    train_reward_model(reward_model, dataset, epochs=100, batch_size=4)
+
+    # Train RNN
+    dataset = MultiStepPreferenceDataset(file_path, 32)
+
+    reward_model = LightningRNNNetwork(
+        input_size=17, hidden_size=128, num_layers=3, dropout=0.2
+    )
+
+    train_reward_model(reward_model, dataset, epochs=100, batch_size=4)
 
 
 if __name__ == "__main__":
