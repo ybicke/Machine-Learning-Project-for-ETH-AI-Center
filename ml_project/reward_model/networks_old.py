@@ -7,7 +7,7 @@ from pytorch_lightning import LightningModule
 from torch import Tensor, nn
 
 
-def calculate_finetuning_loss(network: LightningModule, batch: Tensor):
+def calculate_single_reward_loss(network: LightningModule, batch: Tensor):
     """Calculate the maximum likelihood loss for the better trajectory."""
     rewards1 = network(batch[0]).flatten()
     rewards2 = network(batch[1]).flatten()
@@ -69,16 +69,16 @@ class LightningRNNNetwork(LightningModule):
         prediction = self.linear(lstm_out[:, -1])
         return prediction
 
-    def training_step(self, batch: Tensor):
+    def training_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for training."""
-        loss = calculate_finetuning_loss(self, batch)
+        loss = calculate_single_reward_loss(self, batch)
         self.log("train_loss", loss, prog_bar=True)
 
         return loss
 
-    def validation_step(self, batch: Tensor):
+    def validation_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for validation."""
-        loss = calculate_finetuning_loss(self, batch)
+        loss = calculate_single_reward_loss(self, batch)
         self.log("val_loss", loss, prog_bar=True)
 
     def configure_optimizers(self):
@@ -132,11 +132,11 @@ class LightningNetwork(LightningModule):
 
     def training_step(self, batch: Tensor):
         """Compute the loss for training."""
-        return calculate_finetuning_loss(self, batch)
+        return calculate_single_reward_loss(self, batch)
 
     def validation_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for validation."""
-        loss = calculate_finetuning_loss(self, batch)
+        loss = calculate_single_reward_loss(self, batch)
         self.log("val_loss", loss, prog_bar=True)
 
     def configure_optimizers(self):

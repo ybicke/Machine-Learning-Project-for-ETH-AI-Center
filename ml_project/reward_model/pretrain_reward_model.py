@@ -10,7 +10,7 @@ from torch import optim
 from torch.nn import MSELoss
 from torch.utils.data import DataLoader, Dataset, random_split
 
-from .network import Network
+from .networks_old import Network
 
 # File paths
 script_path = Path(__file__).parent.resolve()

@@ -13,7 +13,7 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.ppo.ppo import PPO
 from stable_baselines3.sac.sac import SAC
 
-from ml_project.reward_model.network import LightningNetwork
+from ml_project.reward_model.networks_old import LightningNetwork
 
 ALGORITHM = "ppo"  # "ppo" or "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
