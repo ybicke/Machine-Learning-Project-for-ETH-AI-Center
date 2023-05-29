@@ -33,6 +33,7 @@ reward_model_path = path.join(
 )
 
 
+# pylint: disable=too-few-public-methods
 class CustomReward(RewardFn):
     """Custom reward based on fine-tuned reward model."""
 
@@ -73,9 +74,13 @@ def main():
         env = RewardVecEnvWrapper(env, reward_fn=CustomReward())
 
     if ALGORITHM == "sac":
-        model = SAC("MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_path)
+        model = SAC(
+            "MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_path, use_sde=True
+        )
     elif ALGORITHM == "ppo":
-        model = PPO("MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_path)
+        model = PPO(
+            "MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_path, use_sde=True
+        )
     else:
         raise NotImplementedError(f"{ALGORITHM} not implemented")
 
