@@ -98,7 +98,7 @@ def main():
         model.save(
             path.join(
                 models_path,
-                f"finetuned_{ALGORITHM}_{ENVIRONMENT_NAME}_{steps_per_iteration*i}",
+                f"{ALGORITHM}_{ENVIRONMENT_NAME}_{steps_per_iteration*i}",
             )
         )
 
