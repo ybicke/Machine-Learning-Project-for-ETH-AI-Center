@@ -25,11 +25,15 @@ finetune_reward = "ml_project.reward_model.finetune_reward_model:main"
 python = "~3.10"
 flask = "^2.3.2"
 numpy = "^1.24.3"
+optuna = "^3.1.1"
+ray = { extras = ["tune"], version = "^2.4.0" }
 tensorboard = "^2.13"
 # Exact versions are required for gym==0.21 (stable-baselines3 dependency)
 mujoco = "2.2"
 mujoco_py = "<2.2,>=2.1"
 imageio = ">=2.14.1"
+# Required for Ray
+protobuf = "<=3.20"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

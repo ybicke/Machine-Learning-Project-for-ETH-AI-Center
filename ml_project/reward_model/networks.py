@@ -27,10 +27,13 @@ class LightningTrajectoryNetwork(LightningModule):
         input_dim: int,
         output_dim: int,
         hidden_dim: int,
+        learning_rate=1e-4,
         activation_function: Type[nn.Module] = nn.ReLU,
         last_activation: Union[Type[nn.Module], None] = None,
     ):
         super().__init__()
+
+        self.learning_rate = learning_rate
 
         # Initialize the network
         layers_unit = [input_dim] + [hidden_dim] * (layer_num - 1)
@@ -76,5 +79,5 @@ class LightningTrajectoryNetwork(LightningModule):
 
     def configure_optimizers(self):
         """Configure optimizer to optimize the neural network."""
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         return optimizer

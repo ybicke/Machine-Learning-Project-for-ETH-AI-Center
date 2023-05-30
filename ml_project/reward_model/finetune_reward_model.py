@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Union
 
 import torch
-from pytorch_lightning import LightningModule, Trainer
+from pytorch_lightning import Callback, LightningModule, Trainer
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader, random_split
 
@@ -21,6 +21,9 @@ script_path = Path(__file__).parent.resolve()
 file_path = path.join(script_path, "preference_dataset.pkl")
 pretrained_model_path = path.join(script_path, "models", "reward_model_pretrained.pth")
 
+cpu_count = os.cpu_count()
+cpu_count = cpu_count if cpu_count is not None else 8
+
 
 def train_reward_model(
     reward_model: LightningModule,
@@ -28,15 +31,14 @@ def train_reward_model(
     epochs: int,
     batch_size: int,
     split_ratio: float = 0.8,
+    callback: Union[Callback, None] = None,
+    enable_progress_bar=True,
 ):
     """Train a reward model given preference data."""
     train_size = math.floor(split_ratio * len(dataset))
     train_set, val_set = random_split(
         dataset, lengths=[train_size, len(dataset) - train_size]
     )
-
-    cpu_count = os.cpu_count()
-    cpu_count = cpu_count if cpu_count is not None else 8
 
     train_loader = DataLoader(
         train_set,
@@ -56,7 +58,11 @@ def train_reward_model(
     trainer = Trainer(
         max_epochs=epochs,
         log_every_n_steps=5,
-        callbacks=[EarlyStopping(monitor="val_loss", mode="min")],
+        enable_progress_bar=enable_progress_bar,
+        callbacks=[
+            EarlyStopping(monitor="val_loss", mode="min"),
+            *([callback] if callback is not None else []),
+        ],
     )
 
     trainer.fit(reward_model, train_loader, val_loader)
@@ -76,10 +82,10 @@ def main():
     # train_reward_model(reward_model, dataset, epochs=100, batch_size=4)
 
     # Train MLP using full-trajectory loss
-    dataset = MultiStepPreferenceDataset(file_path, sequence_length=32)
+    dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
 
     reward_model = LightningTrajectoryNetwork(
-        input_dim=40, hidden_dim=256, layer_num=3, output_dim=1
+        input_dim=40, hidden_dim=256, layer_num=12, output_dim=1, learning_rate=2e-4
     )
 
     # load pre-trained weights
