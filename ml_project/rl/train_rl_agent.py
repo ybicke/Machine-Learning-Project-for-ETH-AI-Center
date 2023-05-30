@@ -85,9 +85,9 @@ def main():
     else:
         raise NotImplementedError(f"{ALGORITHM} not implemented")
 
-    iterations = 10
+    iterations = 20
 
-    steps_per_iteration = 250000
+    steps_per_iteration = 25000
 
     for i in range(iterations):
         model.learn(
