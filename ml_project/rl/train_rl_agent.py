@@ -40,7 +40,7 @@ class CustomReward(RewardFn):
     def __init__(self):
         """Initialize custom reward."""
         self.reward_model = LightningNetwork(
-            layer_num=3, input_dim=17, hidden_dim=256, output_dim=1
+            layer_num=3, input_dim=40, hidden_dim=256, output_dim=1
         )
         checkpoint = torch.load(reward_model_path)
         self.reward_model.load_state_dict(checkpoint["state_dict"])
@@ -49,14 +49,15 @@ class CustomReward(RewardFn):
     def __call__(
         self,
         state: np.ndarray,
-        _action: np.ndarray,
-        _next_state: np.ndarray,
+        action: np.ndarray,
+        next_state: np.ndarray,
         _done: np.ndarray,
     ) -> np.ndarray:
         """Return reward given current state."""
         _batch_idx = 0
+        observation = np.concatenate((state, action, next_state), axis=1)
         return (
-            self.reward_model(torch.Tensor(state), _batch_idx)
+            self.reward_model(torch.Tensor(observation), _batch_idx)
             .squeeze()
             .detach()
             .numpy()

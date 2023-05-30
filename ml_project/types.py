@@ -20,3 +20,7 @@ Trajectory = list[Step]
 Trajectories = dict[int, Trajectory]
 Batch = list[tuple[list[FloatNDArray], list[FloatNDArray]]]
 TensorBatch = list[tuple[Tensor, Tensor]]
+
+Obs = FloatNDArray
+RewardlessTrajectory = list[Obs]
+RewardlessTrajectories = dict[int, RewardlessTrajectory]

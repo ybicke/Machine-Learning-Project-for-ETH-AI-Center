@@ -6,11 +6,12 @@ from pathlib import Path
 from typing import Type, Union
 
 import gym
+import numpy as np
 from gym.wrappers import RecordVideo
 from stable_baselines3.ppo.ppo import PPO
 from stable_baselines3.sac.sac import SAC
 
-from ..types import Step, Trajectories
+from ..types import Obs, RewardlessTrajectories
 
 ALGORITHM = "ppo"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
@@ -27,8 +28,8 @@ def record_videos(
     algorithm: Union[Type[PPO], Type[SAC]], environment: gym.wrappers.RecordVideo
 ):
     """Record videos of the training environment."""
-    obs_dataset: Trajectories = {}
-    observations: list[Step] = []
+    obs_dataset: RewardlessTrajectories = {}
+    observations: list[Obs] = []
 
     n_step = 0
 
@@ -36,10 +37,10 @@ def record_videos(
         if file.startswith(ALGORITHM + "_" + ENVIRONMENT_NAME):
             model = algorithm.load(path.join(models_path, file[:-4]))
 
-            obs = environment.reset()
+            state = environment.reset()
             while n_step < (n_checkpoint + 1) * VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:
-                action, _states = model.predict(obs, deterministic=True)
-                obs, _reward, terminated, _info = environment.step(action)
+                action, _states = model.predict(state, deterministic=True)
+                next_state, _reward, terminated, _info = environment.step(action)
 
                 environment.render(mode="rgb_array")
 
@@ -48,14 +49,16 @@ def record_videos(
                     if i == 0:
                         observations = []
 
-                    observations.append(obs)
+                    observation = np.concatenate((state, action, next_state))
+                    observations.append(observation)
 
                     if i == RECORD_LENGTH - 1:
                         obs_dataset[n_step - RECORD_LENGTH + 1] = observations
 
                 if terminated:
-                    obs = environment.reset()
+                    next_state = environment.reset()
 
+                state = next_state
                 n_step += 1
 
     return obs_dataset

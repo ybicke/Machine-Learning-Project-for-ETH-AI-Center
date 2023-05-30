@@ -6,8 +6,11 @@ from pathlib import Path
 from typing import Type, Union
 
 import gym
+import numpy as np
 from stable_baselines3.ppo.ppo import PPO
 from stable_baselines3.sac.sac import SAC
+
+from ..types import Trajectory
 
 ALGORITHM = "ppo"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
@@ -20,23 +23,25 @@ models_path = path.join(script_path, "models")
 
 def generate_data(algorithm: Union[Type[PPO], Type[SAC]], environment: gym.Env):
     """Generate agent's observations and rewards in the training environment."""
-    data = []
+    data: Trajectory = []
 
     for file in os.listdir(models_path):
         if file.startswith(ALGORITHM + "_" + ENVIRONMENT_NAME):
             model = algorithm.load(path.join(models_path, file[:-4]))
 
             n_step = 0
-            obs = environment.reset()
+            state = environment.reset()
             while n_step < STEPS_PER_CHECKPOINT:
-                action, _states = model.predict(obs, deterministic=True)
-                obs, reward, terminated, _info = environment.step(action)
+                action, _states = model.predict(state, deterministic=True)
+                next_state, reward, terminated, _info = environment.step(action)
 
-                data.append({"obs": obs, "reward": reward})
+                observation = np.concatenate((state, action, next_state))
+                data.append({"obs": observation, "reward": reward})
 
                 if terminated:
-                    obs = environment.reset()
+                    next_state = environment.reset()
 
+                state = next_state
                 n_step += 1
 
     return data

@@ -19,6 +19,7 @@ torch.set_float32_matmul_precision("high")
 # File paths
 script_path = Path(__file__).parent.resolve()
 file_path = path.join(script_path, "preference_dataset.pkl")
+pretrained_model_path = path.join(script_path, "models", "reward_model_pretrained.pth")
 
 
 def train_reward_model(
@@ -78,8 +79,11 @@ def main():
     dataset = MultiStepPreferenceDataset(file_path, sequence_length=32)
 
     reward_model = LightningTrajectoryNetwork(
-        input_dim=17, hidden_dim=256, layer_num=3, output_dim=1
+        input_dim=40, hidden_dim=256, layer_num=3, output_dim=1
     )
+
+    # load pre-trained weights
+    reward_model.load_state_dict(torch.load(pretrained_model_path), strict=False)
 
     train_reward_model(reward_model, dataset, epochs=100, batch_size=1)
 
