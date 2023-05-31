@@ -12,7 +12,7 @@ def calculate_multi_reward_loss(network: LightningModule, batch: Tensor):
     rewards1 = network(batch[0])
     rewards2 = network(batch[1])
 
-    softmax = torch.softmax(torch.cat((rewards1, rewards2), 1), 1)[:, 0]
+    softmax = torch.softmax(torch.cat((rewards1, rewards2), 1), 1)[:, 1]
     loss = -torch.sum(torch.log(softmax))
 
     return loss

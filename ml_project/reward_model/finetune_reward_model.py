@@ -12,7 +12,6 @@ from torch.utils.data import DataLoader, random_split
 
 from .datasets import MultiStepPreferenceDataset, PreferenceDataset
 from .networks import LightningTrajectoryNetwork
-from .networks_old import LightningRNNNetwork
 
 # Utilize Tensor Cores of NVIDIA GPUs
 torch.set_float32_matmul_precision("high")
