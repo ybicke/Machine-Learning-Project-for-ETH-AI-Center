@@ -13,7 +13,7 @@ from stable_baselines3.sac.sac import SAC
 
 from ..types import Obs, RewardlessTrajectories
 
-ALGORITHM = "ppo"
+ALGORITHM = "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
 
 RECORD_INTERVAL = 500
@@ -55,8 +55,8 @@ def record_videos(
                     if i == RECORD_LENGTH - 1:
                         obs_dataset[n_step - RECORD_LENGTH + 1] = observations
 
-                if terminated:
-                    next_state = environment.reset()
+                    if terminated:
+                        next_state = environment.reset()
 
                 state = next_state
                 n_step += 1

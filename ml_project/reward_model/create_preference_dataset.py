@@ -14,7 +14,7 @@ observation_data_path = path.join(
     "..",
     "rl",
     "observation_data_corresponding_to_videos",
-    "ppo_HalfCheetah-v3_obs_dataset.pkl",
+    "sac_HalfCheetah-v3_obs_dataset.pkl",
 )
 
 
@@ -79,6 +79,9 @@ def main():
     preference_indices = get_sorted_indices(preferences_raw)
 
     observations = load_data(observation_data_path)
+
+    print("Preference Indices:", preference_indices)
+    print("Observations Keys:", observations.keys())
 
     preference_dataset = [
         (observations[a], observations[b]) for a, b in preference_indices

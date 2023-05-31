@@ -67,3 +67,4 @@ To run individual scripts, use `python -m <module path>`. E.g., if you want to r
 1. Run `poetry run pretrain_reward` to pretrain the reward model on the generated reward data.
 1. Run `poetry run create_dataset` to create a data set using the collected preferences.
 1. Run `poetry run finetune_reward` to finetune the reward model using the preferences collected.
+1. Run `poetry run tensorboard --logdir lightning_logs` to start the tensorboard to see train and validation loss.
