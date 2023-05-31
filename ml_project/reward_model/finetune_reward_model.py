@@ -92,16 +92,16 @@ def main():
     # load pre-trained weights
     reward_model.load_state_dict(torch.load(pretrained_model_path), strict=False)
 
-    train_reward_model(reward_model, dataset, epochs=100, batch_size=1)
+    train_reward_model(reward_model, dataset, epochs=100, batch_size=4)
 
     # Train RNN
-    dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
+    # dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
 
-    reward_model = LightningRNNNetwork(
-        input_size=40, hidden_size=256, num_layers=12, dropout=0.2
-    )
+    # reward_model = LightningRNNNetwork(
+    #    input_size=40, hidden_size=256, num_layers=12, dropout=0.2
+    # )
 
-    train_reward_model(reward_model, dataset, epochs=100, batch_size=1)
+    # train_reward_model(reward_model, dataset, epochs=100, batch_size=10)
 
 
 if __name__ == "__main__":
