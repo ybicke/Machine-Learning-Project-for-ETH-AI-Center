@@ -3,10 +3,11 @@ import math
 import os
 from os import path
 from pathlib import Path
-from typing import Union
+from typing import Literal, Union
 
 import torch
 from pytorch_lightning import Callback, LightningModule, Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader, random_split
 
@@ -28,7 +29,8 @@ torch.set_float32_matmul_precision("high")
 # File paths
 script_path = Path(__file__).parent.resolve()
 file_path = path.join(script_path, "preference_dataset.pkl")
-pretrained_model_path = path.join(script_path, "models_final", f"{model_id}.ckpt")
+models_path = path.join(script_path, "models_final")
+pretrained_model_path = path.join(models_path, f"{model_id}_pretrained.ckpt")
 
 cpu_count = os.cpu_count()
 cpu_count = cpu_count if cpu_count is not None else 8
@@ -36,6 +38,9 @@ cpu_count = cpu_count if cpu_count is not None else 8
 
 def train_reward_model(
     reward_model: LightningModule,
+    name: Union[
+        Literal["mlp_single"], Literal["mlp"], Literal["mlp_finetuned"], Literal["rnn"]
+    ],
     dataset: Union[PreferenceDataset, MultiStepPreferenceDataset],
     epochs: int,
     batch_size: int,
@@ -64,12 +69,20 @@ def train_reward_model(
         num_workers=cpu_count,
     )
 
+    checkpoint_callback = ModelCheckpoint(
+        dirpath=models_path,
+        filename=f"{model_id}_{name}",
+        monitor="val_loss",
+        save_weights_only=True,
+    )
+
     trainer = Trainer(
         max_epochs=epochs,
         log_every_n_steps=5,
         enable_progress_bar=enable_progress_bar,
         callbacks=[
             EarlyStopping(monitor="val_loss", mode="min"),
+            checkpoint_callback,
             *([callback] if callback is not None else []),
         ],
     )
@@ -81,23 +94,32 @@ def train_reward_model(
 
 def main():
     """Run reward model fine-tuning."""
-    # Train MLP
+    # Train MLP using single observations
     # dataset = PreferenceDataset(file_path)
 
     # reward_model = LightningNetwork(
     #     input_dim=17, hidden_dim=256, layer_num=3, output_dim=1
     # )
 
-    # train_reward_model(reward_model, dataset, epochs=100, batch_size=4)
+    # train_reward_model(reward_model, "mlp_single", dataset, epochs=100, batch_size=4)
 
-    # Train MLP using full-trajectory loss
+    # Finetune MLP using full-trajectory loss
     dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
 
     reward_model = LightningTrajectoryNetwork.load_from_checkpoint(
-        pretrained_model_path
+        pretrained_model_path, input_dim=17, hidden_dim=256, layer_num=12, output_dim=1
     )
 
-    train_reward_model(reward_model, dataset, epochs=100, batch_size=4)
+    train_reward_model(reward_model, "mlp_finetuned", dataset, epochs=100, batch_size=4)
+
+    # Train MLP using full-trajectory loss
+    # dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
+
+    # reward_model = LightningTrajectoryNetwork(
+    #     input_dim=17, hidden_dim=256, layer_num=12, output_dim=1
+    # )
+
+    # train_reward_model(reward_model, "mlp", dataset, epochs=100, batch_size=4)
 
     # Train RNN
     # dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
@@ -106,7 +128,7 @@ def main():
     #    input_size=17, hidden_size=256, num_layers=12, dropout=0.2
     # )
 
-    # train_reward_model(reward_model, dataset, epochs=100, batch_size=10)
+    # train_reward_model(reward_model, "rnn", dataset, epochs=100, batch_size=10)
 
 
 if __name__ == "__main__":

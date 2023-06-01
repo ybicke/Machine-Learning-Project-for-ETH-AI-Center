@@ -17,7 +17,7 @@ from ..types import Obs, RewardlessTrajectories
 ALGORITHM = "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
 USE_REWARD_MODEL = False
-USE_SDE = False
+USE_SDE = True
 
 model_id = f"{ALGORITHM}_{ENVIRONMENT_NAME}"
 model_id += "_sde" if USE_SDE else ""
