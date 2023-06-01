@@ -1,6 +1,6 @@
 """Module for instantiating a neural network."""
 # pylint: disable=arguments-differ
-from typing import Type, Union
+from typing import Callable, Type, Union
 
 import torch
 from pytorch_lightning import LightningModule
@@ -61,10 +61,14 @@ class LightningTrajectoryNetwork(LightningModule):
         learning_rate=1e-4,
         activation_function: Type[nn.Module] = nn.ReLU,
         last_activation: Union[Type[nn.Module], None] = None,
+        calculate_loss: Callable[
+            [LightningModule, Tensor], Tensor
+        ] = calculate_multi_reward_loss,
     ):
         super().__init__()
 
         self.learning_rate = learning_rate
+        self.calculate_loss = calculate_loss
 
         # Initialize the network
         layers_unit = [input_dim] + [hidden_dim] * (layer_num - 1)
@@ -98,14 +102,14 @@ class LightningTrajectoryNetwork(LightningModule):
 
     def training_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for training."""
-        loss = calculate_multi_reward_loss(self, batch)
+        loss = self.calculate_loss(self, batch)
         self.log("train_loss", loss, prog_bar=True)
 
         return loss
 
     def validation_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for validation."""
-        loss = calculate_multi_reward_loss(self, batch)
+        loss = self.calculate_loss(self, batch)
         self.log("val_loss", loss, prog_bar=True)
 
     def configure_optimizers(self):

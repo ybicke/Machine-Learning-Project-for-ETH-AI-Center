@@ -1,6 +1,7 @@
 """Module for saving videos and data of an RL agent's trajectories."""
 import os
 import pickle
+import re
 from os import path
 from pathlib import Path
 from typing import Type, Union
@@ -15,13 +16,19 @@ from ..types import Obs, RewardlessTrajectories
 
 ALGORITHM = "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
+USE_REWARD_MODEL = False
+USE_SDE = False
+
+model_id = f"{ALGORITHM}_{ENVIRONMENT_NAME}"
+model_id += "_sde" if USE_SDE else ""
+model_id += "_finetuned" if USE_REWARD_MODEL else ""
 
 RECORD_INTERVAL = 500
 RECORD_LENGTH = 100
-VIDEOS_PER_CHECKPOINT = 5
+VIDEOS_PER_CHECKPOINT = 2
 
 script_path = Path(__file__).parent.resolve()
-models_path = path.join(script_path, "models")
+models_path = path.join(script_path, "models_final")
 
 
 def record_videos(
@@ -33,12 +40,12 @@ def record_videos(
 
     n_step = 0
 
-    for n_checkpoint, file in enumerate(os.listdir(models_path)):
-        if file.startswith(ALGORITHM + "_" + ENVIRONMENT_NAME):
+    for _, file in enumerate(os.listdir(models_path)):
+        if re.search(f"{model_id}_[0-9]", file):
             model = algorithm.load(path.join(models_path, file[:-4]))
 
             state = environment.reset()
-            while n_step < (n_checkpoint + 1) * VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:
+            while n_step < VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:
                 action, _states = model.predict(state, deterministic=True)
                 next_state, _reward, terminated, _info = environment.step(action)
 
@@ -72,7 +79,7 @@ def main():
         video_folder=path.join(script_path, "..", "static", "videos"),
         step_trigger=lambda n: n % RECORD_INTERVAL == 0,
         video_length=RECORD_LENGTH,
-        name_prefix=f"{ALGORITHM}-{ENVIRONMENT_NAME}",
+        name_prefix=f"{model_id}",
     )
 
     if ALGORITHM == "sac":
@@ -88,7 +95,7 @@ def main():
         path.join(
             script_path,
             "observation_data_corresponding_to_videos",
-            f"{ALGORITHM}_{ENVIRONMENT_NAME}_obs_dataset.pkl",
+            f"{model_id}_obs_dataset.pkl",
         ),
         "wb",
     ) as handle:

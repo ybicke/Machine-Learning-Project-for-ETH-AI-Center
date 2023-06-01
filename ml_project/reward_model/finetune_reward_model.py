@@ -13,13 +13,22 @@ from torch.utils.data import DataLoader, random_split
 from .datasets import MultiStepPreferenceDataset, PreferenceDataset
 from .networks import LightningTrajectoryNetwork
 
+ALGORITHM = "sac"  # "ppo" or "sac"
+ENVIRONMENT_NAME = "HalfCheetah-v3"
+USE_REWARD_MODEL = False
+USE_SDE = True
+
+model_id = f"{ALGORITHM}_{ENVIRONMENT_NAME}"
+model_id += "_sde" if USE_SDE else ""
+model_id += "_finetuned" if USE_REWARD_MODEL else ""
+
 # Utilize Tensor Cores of NVIDIA GPUs
 torch.set_float32_matmul_precision("high")
 
 # File paths
 script_path = Path(__file__).parent.resolve()
 file_path = path.join(script_path, "preference_dataset.pkl")
-pretrained_model_path = path.join(script_path, "models", "reward_model_pretrained.pth")
+pretrained_model_path = path.join(script_path, "models_final", f"{model_id}.ckpt")
 
 cpu_count = os.cpu_count()
 cpu_count = cpu_count if cpu_count is not None else 8
@@ -84,12 +93,9 @@ def main():
     # Train MLP using full-trajectory loss
     dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
 
-    reward_model = LightningTrajectoryNetwork(
-        input_dim=40, hidden_dim=256, layer_num=12, output_dim=1, learning_rate=2e-4
+    reward_model = LightningTrajectoryNetwork.load_from_checkpoint(
+        pretrained_model_path
     )
-
-    # load pre-trained weights
-    reward_model.load_state_dict(torch.load(pretrained_model_path), strict=False)
 
     train_reward_model(reward_model, dataset, epochs=100, batch_size=4)
 
@@ -97,7 +103,7 @@ def main():
     # dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
 
     # reward_model = LightningRNNNetwork(
-    #    input_size=40, hidden_size=256, num_layers=12, dropout=0.2
+    #    input_size=17, hidden_size=256, num_layers=12, dropout=0.2
     # )
 
     # train_reward_model(reward_model, dataset, epochs=100, batch_size=10)

@@ -1,22 +1,46 @@
 """Module for pre-training a reward model from trajectory data."""
 import math
+import os
 import pickle
 from os import path
 from pathlib import Path
 
-import numpy as np
 import torch
-from torch import optim
-from torch.nn import MSELoss
+from pytorch_lightning import LightningModule, Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from torch import Tensor
+from torch.nn.functional import mse_loss
 from torch.utils.data import DataLoader, Dataset, random_split
 
-from .networks_old import Network
+from .networks_old import LightningNetwork
+
+ALGORITHM = "sac"  # "ppo" or "sac"
+ENVIRONMENT_NAME = "HalfCheetah-v3"
+USE_REWARD_MODEL = False
+USE_SDE = True
+
+model_id = f"{ALGORITHM}_{ENVIRONMENT_NAME}"
+model_id += "_sde" if USE_SDE else ""
+model_id += "_finetuned" if USE_REWARD_MODEL else ""
 
 # File paths
 script_path = Path(__file__).parent.resolve()
 file_path = path.join(
-    script_path, "..", "rl", "reward_data", "ppo_HalfCheetah-v3_obs_reward_dataset.pkl"
+    script_path, "..", "rl", "reward_data_final", f"{model_id}_reward_dataset.pkl"
 )
+models_path = path.join(script_path, "models_final")
+
+cpu_count = os.cpu_count()
+cpu_count = cpu_count if cpu_count is not None else 8
+
+# Utilize Tensor Cores of NVIDIA GPUs
+torch.set_float32_matmul_precision("high")
+
+
+def calculate_mse_loss(network: LightningModule, batch: Tensor):
+    """Calculate the mean squared erro loss for the reward."""
+    return mse_loss(network(batch[0]), batch[1].unsqueeze(1), reduction="sum")
 
 
 class TrajectoryDataset(Dataset):
@@ -26,8 +50,8 @@ class TrajectoryDataset(Dataset):
         """Initialize dataset."""
         with open(dataset_path, "rb") as handle:
             self.trajectories = pickle.load(handle)
-        self.data = [t["obs"] for t in self.trajectories]
-        self.target = [t["reward"] for t in self.trajectories]
+        self.data = [t["obs"].astype("float32") for t in self.trajectories]
+        self.target = [t["reward"].astype("float32") for t in self.trajectories]
 
     def __len__(self):
         """Return size of dataset."""
@@ -39,91 +63,47 @@ class TrajectoryDataset(Dataset):
 
 
 def train_reward_model(
-    reward_model: Network,
+    reward_model: LightningModule,
     dataset: TrajectoryDataset,
     epochs: int,
     batch_size: int,
     split_ratio: float = 0.8,
-    patience: int = 10,
 ):
     """Train a reward model given trajectories data."""
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    reward_model = reward_model.to(device)
-    optimizer = optim.Adam(reward_model.parameters(), lr=1e-3)
-
     train_size = math.floor(split_ratio * len(dataset))
     train_set, val_set = random_split(
         dataset, lengths=[train_size, len(dataset) - train_size]
     )
 
     train_loader = DataLoader(
-        train_set, batch_size=batch_size, shuffle=True, pin_memory=True
+        train_set,
+        batch_size=batch_size,
+        shuffle=True,
+        pin_memory=True,
+        num_workers=cpu_count,
     )
+
     val_loader = DataLoader(
-        val_set, batch_size=batch_size, shuffle=True, pin_memory=True
+        val_set,
+        batch_size=batch_size,
+        pin_memory=True,
+        num_workers=cpu_count,
     )
 
-    best_val_loss = float("inf")
-    no_improvement_epochs = 0
+    checkpoint_callback = ModelCheckpoint(
+        dirpath=models_path,
+        filename=f"{model_id}",
+        monitor="val_loss",
+        save_weights_only=True,
+    )
 
-    loss_fn = MSELoss(reduction="sum")
+    trainer = Trainer(
+        max_epochs=epochs,
+        log_every_n_steps=5,
+        callbacks=[EarlyStopping(monitor="val_loss", mode="min"), checkpoint_callback],
+    )
 
-    best_model_state = reward_model.state_dict()  # Initialize with the initial state
-    for epoch in range(epochs):
-        # Training
-        train_losses = []
-        for obs, reward in train_loader:
-            loss = loss_fn(
-                reward_model(obs.to(device).float()),
-                reward.to(device).float().unsqueeze(1),
-            )
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            train_losses.append(loss.item())
-        avg_train_loss = np.mean(train_losses)
-
-        # Validation
-        with torch.no_grad():
-            val_losses = []
-            for obs, reward in val_loader:
-                loss = loss_fn(
-                    reward_model(obs.to(device).float()),
-                    reward.to(device).float().unsqueeze(1),
-                )
-                val_losses.append(loss.item())
-            avg_val_loss = np.mean(val_losses)
-
-        print(
-            f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss}"
-            f", Val Loss: {avg_val_loss}"
-        )
-
-        # Early stopping
-        delta = 0.001  # minimum acceptable improvement
-        if avg_val_loss < best_val_loss - delta:
-            best_val_loss = avg_val_loss
-            best_model_state = (
-                reward_model.state_dict()
-            )  # save the parameters of the best model
-            torch.save(
-                best_model_state,
-                path.join(script_path, "models", "reward_model_pretrained.pth"),
-            )  # save the parameters for later use to disk
-            no_improvement_epochs = 0
-        else:
-            no_improvement_epochs += 1
-            if no_improvement_epochs >= patience:
-                print(
-                    f"No improvement after for {patience} epochs"
-                    ", therefore stopping training."
-                )
-                # break instead of return, so that the function can return the
-                # best model state
-                break
-
-    # load the weights and biases for the best model state during training
-    reward_model.load_state_dict(best_model_state)
+    trainer.fit(reward_model, train_loader, val_loader)
 
     return reward_model
 
@@ -133,10 +113,14 @@ def main():
     # Load data
     dataset = TrajectoryDataset(file_path)
 
-    # Initialize network
-    reward_model = Network(layer_num=3, input_dim=40, hidden_dim=256, output_dim=1)
+    reward_model = LightningNetwork(
+        input_dim=17,
+        hidden_dim=256,
+        layer_num=12,
+        output_dim=1,
+        calculate_loss=calculate_mse_loss,
+    )
 
-    # Train model
     train_reward_model(reward_model, dataset, epochs=100, batch_size=32)
 
 

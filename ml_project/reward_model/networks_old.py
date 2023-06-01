@@ -1,6 +1,6 @@
 """Module for instantiating a neural network."""
 # pylint: disable=arguments-differ
-from typing import Type, Union
+from typing import Callable, Type, Union
 
 import torch
 from pytorch_lightning import LightningModule
@@ -98,8 +98,13 @@ class LightningNetwork(LightningModule):
         hidden_dim: int,
         activation_function: Type[nn.Module] = nn.ReLU,
         last_activation: Union[Type[nn.Module], None] = None,
+        calculate_loss: Callable[
+            [LightningModule, Tensor], Tensor
+        ] = calculate_single_reward_loss,
     ):
         super().__init__()
+
+        self.calculate_loss = calculate_loss
 
         # Initialize the network
         layers_unit = [input_dim] + [hidden_dim] * (layer_num - 1)
@@ -132,11 +137,11 @@ class LightningNetwork(LightningModule):
 
     def training_step(self, batch: Tensor):
         """Compute the loss for training."""
-        return calculate_single_reward_loss(self, batch)
+        return self.calculate_loss(self, batch)
 
     def validation_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for validation."""
-        loss = calculate_single_reward_loss(self, batch)
+        loss = self.calculate_loss(self, batch)
         self.log("val_loss", loss, prog_bar=True)
 
     def configure_optimizers(self):
@@ -154,32 +159,44 @@ class Network(nn.Module):
         input_dim,
         output_dim,
         hidden_dim,
-        activation_function=torch.relu,
+        activation_function=nn.ReLU,
         last_activation=None,
+        learning_rate=2e-4,
     ):
         super().__init__()
-        self.activation = activation_function
-        self.last_activation = last_activation
+
+        self.learning_rate = learning_rate
+
+        # Initialize the network
         layers_unit = [input_dim] + [hidden_dim] * (layer_num - 1)
-        layers = [
-            nn.Linear(layers_unit[idx], layers_unit[idx + 1])
-            for idx in range(len(layers_unit) - 1)
-        ]
-        self.layers = nn.ModuleList(layers)
-        self.last_layer = nn.Linear(layers_unit[-1], output_dim)
-        self.network_init()
+
+        layers: list[nn.Module] = []
+
+        for idx in range(len(layers_unit) - 1):
+            layers.append(nn.Linear(layers_unit[idx], layers_unit[idx + 1]))
+            layers.append(activation_function())
+
+        layers.append(nn.Linear(layers_unit[-1], output_dim))
+
+        if last_activation is not None:
+            layers.append(last_activation())
+
+        self.network = nn.Sequential(*layers)
+
+        # Initialize the weights
+        for layer in self.modules():
+            if isinstance(layer, nn.Linear):
+                nn.init.orthogonal_(layer.weight)
+
+                layer.bias.data.zero_()
+                layer.bias.data.zero_()
 
     def forward(self, data: Tensor):
         """Do a forward pass through the neural network (inference)."""
         return self._forward(data)
 
     def _forward(self, data: Tensor):
-        for layer in self.layers:
-            data = self.activation(layer(data))
-        data = self.last_layer(data)
-        if self.last_activation is not None:
-            data = self.last_activation(data)
-        return data
+        return self.network(data)
 
     def network_init(self):
         """Initialize the neural network."""

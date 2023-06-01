@@ -15,12 +15,18 @@ from stable_baselines3.sac.sac import SAC
 
 from ml_project.reward_model.networks_old import LightningNetwork
 
-ALGORITHM = "ppo"  # "ppo" or "sac"
+ALGORITHM = "sac"  # "ppo" or "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
 USE_REWARD_MODEL = False
+USE_SDE = True
+
+model_id = f"{ALGORITHM}_{ENVIRONMENT_NAME}"
+model_id += "_sde" if USE_SDE else ""
+model_id += "_finetuned" if USE_REWARD_MODEL else ""
+
 
 script_path = Path(__file__).parent.resolve()
-models_path = path.join(script_path, "models")
+models_path = path.join(script_path, "models_final")
 tensorboard_path = path.join(script_path, "..", "..", "rl_logs")
 reward_model_path = path.join(
     script_path,
@@ -69,39 +75,47 @@ def main():
     cpu_count = os.cpu_count()
     cpu_count = cpu_count if cpu_count is not None else 8
 
-    env = make_vec_env(ENVIRONMENT_NAME, n_envs=cpu_count)
+    # For PPO, the more environments there are, the more `num_timesteps`
+    # shifts from `total_timesteps`
+    env = make_vec_env(ENVIRONMENT_NAME, n_envs=cpu_count if ALGORITHM != "ppo" else 1)
 
     if USE_REWARD_MODEL:
         env = RewardVecEnvWrapper(env, reward_fn=CustomReward())
 
     if ALGORITHM == "sac":
         model = SAC(
-            "MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_path, use_sde=True
+            "MlpPolicy",
+            env,
+            verbose=1,
+            tensorboard_log=tensorboard_path,
+            use_sde=USE_SDE,
         )
     elif ALGORITHM == "ppo":
         model = PPO(
-            "MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_path, use_sde=True
+            "MlpPolicy",
+            env,
+            verbose=1,
+            tensorboard_log=tensorboard_path,
+            use_sde=USE_SDE,
+            device="cpu",
         )
     else:
         raise NotImplementedError(f"{ALGORITHM} not implemented")
 
     iterations = 20
-
     steps_per_iteration = 25000
+    timesteps = 0
 
     for i in range(iterations):
-        model.learn(
-            total_timesteps=steps_per_iteration,
+        trained_model = model.learn(
+            total_timesteps=steps_per_iteration * (i + 1) - timesteps,
             reset_num_timesteps=False,
-            log_interval=4,
+            tb_log_name=model_id,
         )
 
-        model.save(
-            path.join(
-                models_path,
-                f"{ALGORITHM}_{ENVIRONMENT_NAME}_{steps_per_iteration*i}",
-            )
-        )
+        timesteps = trained_model.num_timesteps
+
+        model.save(path.join(models_path, f"{model_id}_{timesteps}"))
 
 
 if __name__ == "__main__":
