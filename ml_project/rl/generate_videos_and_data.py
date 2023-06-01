@@ -17,7 +17,7 @@ from ..types import Obs, RewardlessTrajectories
 ALGORITHM = "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
 USE_REWARD_MODEL = False
-USE_SDE = False
+USE_SDE = True
 
 model_id = f"{ALGORITHM}_{ENVIRONMENT_NAME}"
 model_id += "_sde" if USE_SDE else ""
@@ -38,13 +38,12 @@ def record_videos(
     obs_dataset: RewardlessTrajectories = {}
     observations: list[Obs] = []
 
-    n_step = 0
-
-    for _, file in enumerate(os.listdir(models_path)):
+    for file in os.listdir(models_path):
         if re.search(f"{model_id}_[0-9]", file):
             model = algorithm.load(path.join(models_path, file[:-4]))
 
             state = environment.reset()
+            n_step = 0
             while n_step < VIDEOS_PER_CHECKPOINT * RECORD_INTERVAL:
                 action, _states = model.predict(state, deterministic=True)
                 next_state, _reward, terminated, _info = environment.step(action)
