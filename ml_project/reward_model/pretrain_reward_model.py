@@ -15,10 +15,10 @@ from torch.utils.data import DataLoader, Dataset, random_split
 
 from .networks_old import LightningNetwork
 
-ALGORITHM = "sac"  # "ppo" or "sac"
+ALGORITHM = "ppo"  # "ppo" or "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
 USE_REWARD_MODEL = False
-USE_SDE = True
+USE_SDE = False
 
 model_id = f"{ALGORITHM}_{ENVIRONMENT_NAME}"
 model_id += "_sde" if USE_SDE else ""
@@ -92,7 +92,7 @@ def train_reward_model(
 
     checkpoint_callback = ModelCheckpoint(
         dirpath=models_path,
-        filename=f"{model_id}",
+        filename=f"{model_id}_pretrained",
         monitor="val_loss",
         save_weights_only=True,
     )

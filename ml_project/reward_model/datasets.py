@@ -5,7 +5,7 @@ from itertools import chain
 import numpy
 from torch.utils.data import Dataset
 
-from ..types import FloatNDArray, Trajectory
+from ..types import FloatNDArray, RewardlessTrajectory
 
 
 class PreferenceDataset(Dataset):
@@ -14,13 +14,15 @@ class PreferenceDataset(Dataset):
     def __init__(self, dataset_path: str):
         """Initialize dataset."""
         with open(dataset_path, "rb") as handle:
-            trajectory_pairs: list[tuple[Trajectory, Trajectory]] = pickle.load(handle)
+            trajectory_pairs: list[
+                tuple[RewardlessTrajectory, RewardlessTrajectory]
+            ] = pickle.load(handle)
 
         steps = [
             (
                 (
-                    trajectory1[index]["obs"].astype("float32"),
-                    trajectory2[index]["obs"].astype("float32"),
+                    trajectory1[index][:17].astype("float32"),
+                    trajectory2[index][:17].astype("float32"),
                 )
                 for index in range(len(trajectory1))
             )
@@ -45,7 +47,9 @@ class MultiStepPreferenceDataset(Dataset):
     def __init__(self, dataset_path: str, sequence_length: int):
         """Initialize dataset."""
         with open(dataset_path, "rb") as handle:
-            trajectory_pairs: list[tuple[Trajectory, Trajectory]] = pickle.load(handle)
+            trajectory_pairs: list[
+                tuple[RewardlessTrajectory, RewardlessTrajectory]
+            ] = pickle.load(handle)
 
         sequence_pairs: list[tuple[FloatNDArray, FloatNDArray]] = []
 
@@ -61,11 +65,11 @@ class MultiStepPreferenceDataset(Dataset):
                 # gather input and output parts of the pattern
                 sequence_pair = (
                     numpy.array(
-                        [step["obs"] for step in trajectory1[index:end_index]],
+                        [step[:17] for step in trajectory1[index:end_index]],
                         dtype=numpy.float32,
                     ),
                     numpy.array(
-                        [step["obs"] for step in trajectory2[index:end_index]],
+                        [step[:17] for step in trajectory2[index:end_index]],
                         dtype=numpy.float32,
                     ),
                 )
