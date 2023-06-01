@@ -1,6 +1,6 @@
 """Module for instantiating a neural network."""
 # pylint: disable=arguments-differ
-from typing import Callable, Type, Union
+from typing import Type, Union
 
 import torch
 from pytorch_lightning import LightningModule
@@ -9,8 +9,8 @@ from torch import Tensor, nn
 
 def calculate_multi_reward_loss(network: LightningModule, batch: Tensor):
     """Calculate the maximum likelihood loss for the better trajectory."""
-    rewards1 = network(batch[0])
-    rewards2 = network(batch[1])
+    rewards1 = torch.sum(network(batch[0]))
+    rewards2 = torch.sum(network(batch[1]))
 
     index_of_preferred_traj = 1
     softmax = torch.softmax(torch.cat((rewards1, rewards2), 1), 1)[
@@ -61,14 +61,10 @@ class LightningTrajectoryNetwork(LightningModule):
         learning_rate=1e-4,
         activation_function: Type[nn.Module] = nn.ReLU,
         last_activation: Union[Type[nn.Module], None] = None,
-        calculate_loss: Callable[
-            [LightningModule, Tensor], Tensor
-        ] = calculate_multi_reward_loss,
     ):
         super().__init__()
 
         self.learning_rate = learning_rate
-        self.calculate_loss = calculate_loss
 
         # Initialize the network
         layers_unit = [input_dim] + [hidden_dim] * (layer_num - 1)
@@ -96,20 +92,20 @@ class LightningTrajectoryNetwork(LightningModule):
 
     def forward(self, batch: Tensor):
         """Do a forward pass through the neural network (inference)."""
-        return sum(
+        return [
             self.network(state_batch) for state_batch in torch.swapaxes(batch, 0, 1)
-        )
+        ]
 
     def training_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for training."""
-        loss = self.calculate_loss(self, batch)
+        loss = calculate_multi_reward_loss(self, batch)
         self.log("train_loss", loss, prog_bar=True)
 
         return loss
 
     def validation_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for validation."""
-        loss = self.calculate_loss(self, batch)
+        loss = calculate_multi_reward_loss(self, batch)
         self.log("val_loss", loss, prog_bar=True)
 
     def configure_optimizers(self):

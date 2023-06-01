@@ -9,8 +9,6 @@ import torch
 from pytorch_lightning import LightningModule, Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from torch import Tensor
-from torch.nn.functional import mse_loss
 from torch.utils.data import DataLoader, Dataset, random_split
 
 from .networks_old import LightningNetwork
@@ -36,11 +34,6 @@ cpu_count = cpu_count if cpu_count is not None else 8
 
 # Utilize Tensor Cores of NVIDIA GPUs
 torch.set_float32_matmul_precision("high")
-
-
-def calculate_mse_loss(network: LightningModule, batch: Tensor):
-    """Calculate the mean squared erro loss for the reward."""
-    return mse_loss(network(batch[0]), batch[1].unsqueeze(1), reduction="sum")
 
 
 class TrajectoryDataset(Dataset):
@@ -114,11 +107,7 @@ def main():
     dataset = TrajectoryDataset(file_path)
 
     reward_model = LightningNetwork(
-        input_dim=17,
-        hidden_dim=256,
-        layer_num=12,
-        output_dim=1,
-        calculate_loss=calculate_mse_loss,
+        input_dim=17, hidden_dim=256, layer_num=12, output_dim=1
     )
 
     train_reward_model(reward_model, dataset, epochs=100, batch_size=32)

@@ -43,6 +43,7 @@ def train(config: dict[str, int]):
 
     train_reward_model(
         reward_model,
+        "mlp",
         dataset,
         epochs=1000,
         batch_size=1,

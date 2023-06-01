@@ -1,10 +1,16 @@
 """Module for instantiating a neural network."""
 # pylint: disable=arguments-differ
-from typing import Callable, Type, Union
+from typing import Type, Union
 
 import torch
 from pytorch_lightning import LightningModule
 from torch import Tensor, nn
+from torch.nn.functional import mse_loss
+
+
+def calculate_mse_loss(network: LightningModule, batch: Tensor):
+    """Calculate the mean squared erro loss for the reward."""
+    return mse_loss(network(batch[0]), batch[1].unsqueeze(1), reduction="sum")
 
 
 def calculate_single_reward_loss(network: LightningModule, batch: Tensor):
@@ -24,23 +30,24 @@ class LightningRNNNetwork(LightningModule):
 
     def __init__(
         self,
-        input_size: int,
-        hidden_size: int,
-        num_layers: int,
-        dropout: float,
+        input_dim: int,
+        hidden_dim: int,
+        layer_num: int,
+        output_dim: int,
+        dropout: float = 0.2,
     ):
         super().__init__()
 
         # Initialize the network
         self.lstm = nn.LSTM(
-            input_size=input_size,
-            hidden_size=hidden_size,
-            num_layers=num_layers,
+            input_dim=input_dim,
+            hidden_dim=hidden_dim,
+            layer_num=layer_num,
             dropout=dropout,
             batch_first=True,
         )
 
-        self.linear = nn.Linear(hidden_size, 1)
+        self.linear = nn.Linear(hidden_dim, output_dim)
 
         # Initialize the weights
         # https://www.kaggle.com/code/junkoda/pytorch-lstm-with-tensorflow-like-initialization
@@ -98,13 +105,8 @@ class LightningNetwork(LightningModule):
         hidden_dim: int,
         activation_function: Type[nn.Module] = nn.ReLU,
         last_activation: Union[Type[nn.Module], None] = None,
-        calculate_loss: Callable[
-            [LightningModule, Tensor], Tensor
-        ] = calculate_single_reward_loss,
     ):
         super().__init__()
-
-        self.calculate_loss = calculate_loss
 
         # Initialize the network
         layers_unit = [input_dim] + [hidden_dim] * (layer_num - 1)
@@ -137,11 +139,11 @@ class LightningNetwork(LightningModule):
 
     def training_step(self, batch: Tensor):
         """Compute the loss for training."""
-        return self.calculate_loss(self, batch)
+        return calculate_mse_loss(self, batch)
 
     def validation_step(self, batch: Tensor, _batch_idx: int):
         """Compute the loss for validation."""
-        loss = self.calculate_loss(self, batch)
+        loss = calculate_mse_loss(self, batch)
         self.log("val_loss", loss, prog_bar=True)
 
     def configure_optimizers(self):
@@ -203,5 +205,6 @@ class Network(nn.Module):
         for layer in self.modules():
             if isinstance(layer, nn.Linear):
                 nn.init.orthogonal_(layer.weight)
+                layer.bias.data.zero_()
                 layer.bias.data.zero_()
                 layer.bias.data.zero_()

@@ -14,6 +14,8 @@ from torch.utils.data import DataLoader, random_split
 from .datasets import MultiStepPreferenceDataset, PreferenceDataset
 from .networks import LightningTrajectoryNetwork
 
+# from .networks_old import LightningRNNNetwork
+
 ALGORITHM = "sac"  # "ppo" or "sac"
 ENVIRONMENT_NAME = "HalfCheetah-v3"
 USE_REWARD_MODEL = False
@@ -73,7 +75,6 @@ def train_reward_model(
         dirpath=models_path,
         filename=f"{model_id}_{name}",
         monitor="val_loss",
-        save_weights_only=True,
     )
 
     trainer = Trainer(
@@ -125,10 +126,10 @@ def main():
     # dataset = MultiStepPreferenceDataset(file_path, sequence_length=70)
 
     # reward_model = LightningRNNNetwork(
-    #    input_size=17, hidden_size=256, num_layers=12, dropout=0.2
+    #     input_dim=17, hidden_dim=256, layer_num=12, output_dim=1, dropout=0.2
     # )
 
-    # train_reward_model(reward_model, "rnn", dataset, epochs=100, batch_size=10)
+    # train_reward_model(reward_model, "rnn", dataset, epochs=100, batch_size=4)
 
 
 if __name__ == "__main__":
