@@ -31,7 +31,7 @@ This is the repository for the AI Center Projects in Machine Learning Research c
 
 ### Setting up VSCode (recommended)
 
-1. Install and open [VSCode](https://code.visualstudio.com/download)\
+1. Install and open [VSCode](https://code.visualstudio.com/download)
 1. Install these VSCode extensions (by searching for them on the extensions tab): `charliermarsh.ruff`, `njpwerner.autodocstring`, `visualstudioexptteam.vscodeintellicode`, `ms-python.black-formatter`, `ms-python.isort`, `ms-python.vscode-pylance`, `ms-python.pylint`, `ms-python.python`, `kevinrose.vsc-python-indent`
 1. Open the command palette, choose `Python: Select Interpreter`, then select the virtual environment created by Anaconda.
    *Note: If the desired environment is not in the list, you can find the location of the environments by running `conda env list`, then add the interpreter as a new entry.*
