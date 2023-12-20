@@ -1,9 +1,9 @@
 # Machine Learning Project
 
+This project explores Inverse Reinforcement Learning for the half-cheetha by using the physical based MUJOCCO simulator.
+
+
 This is the repository for the AI Center Projects in Machine Learning Research course in 2023 Spring.
-
-In this project we explored Inverse Reinforcement Learning for the half-cheetha in the physical based MUJOCCO simulator.
-
 <!-- TODO: check if we can remove pytorch stubs with 2.*, clean conda, mamba -->
 
 ## Setting up
