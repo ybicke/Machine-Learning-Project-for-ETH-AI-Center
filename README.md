@@ -1,6 +1,6 @@
 # Machine Learning Project
 
-This project explores Inverse Reinforcement Learning for the half-cheetha by using the physical based MUJOCCO simulator.
+Explored Inverse Reinforcement Learning (IRL) for the Half-Cheetah environment using the physics-based MuJoCo simulator. Developed an interactive user interface for rating locomotion trajectories during training, enabling human-in-the-loop feedback to accelerate policy learning and improve performance.
 
 
 This is the repository for the AI Center Projects in Machine Learning Research course in 2023 Spring.
